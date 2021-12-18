@@ -3,7 +3,7 @@
 
 ### Dependency:
 * python >= 3.6
-* PyQt5 (python and Qt5 binding)
+* PyQt5 (python and Qt5 bindings)
 * numpy (optional)
 
 ### Run:

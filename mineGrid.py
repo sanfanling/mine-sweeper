@@ -9,10 +9,12 @@ from PyQt5.QtGui import *
 
 
 class mineGrid(QPushButton):
-    touched = pyqtSignal()
-    def __init__(self, source): # source理论上为0-9,0意味着周边没有雷，表象上应该是灰色不可按；如source == -1,定义为“雷”
+    touchPress = pyqtSignal()
+    touchRelease = pyqtSignal()
+    zeroTouched = pyqtSignal()
+    def __init__(self, value): # value理论上为0-9,0意味着周边没有雷，表象上应该是灰色不可按；如value == -1,定义为“雷”
         super().__init__()
-        self.source = source
+        self.value = value
         self.leftRight = False
         self.blankState()
         
@@ -43,7 +45,7 @@ class mineGrid(QPushButton):
     def numberState(self):
         self.state = "numberState"
         self.setFlat(True)
-        self.setText(str(self.source))
+        self.setText(str(self.value))
         self.setIcon(QIcon(""))
     
     # under explodeState, game over
@@ -60,25 +62,24 @@ class mineGrid(QPushButton):
         self.setText("")
         self.setIcon(QIcon(""))
     
-    def checkAround(self): # if mines around, show a down-up state changing in around grids, otherwise change to numberState or zeroState
-        print("探索周边")
-        self.touched.emit()
-    
     
     def mouseReleaseEvent(self, e):
         if not self.rect().contains(e.pos()):
-            self.setDown(False)
-            self.leftRight = False
+            if self.state == 'numberState' and self.leftRight:
+                self.touchRelease.emit()
+            else:
+                self.setDown(False)
+                self.leftRight = False
             return
         
         if self.state == "blankState":
             self.setDown(False)
             if e.button() == Qt.LeftButton and not self.leftRight:
-                if 1 <= self.source <= 9:
+                if 1 <= self.value <= 9:
                     self.numberState()
-                elif self.source == 0:
-                    self.zeroState()
-                elif self.source == -1:
+                elif self.value == 0:
+                    self.zeroTouched.emit()
+                elif self.value == -1:
                     self.explodeState()
             elif e.button() == Qt.RightButton and not self.leftRight:
                 self.markState()
@@ -103,7 +104,7 @@ class mineGrid(QPushButton):
             if (e.button() == Qt.LeftButton and self.leftRight and e.buttons() == Qt.NoButton) or (e.button() == Qt.RightButton and self.leftRight and e.buttons() == Qt.NoButton) or e.button() == Qt.MidButton:
                 print("左右键同时释放")
                 self.leftRight = False
-                self.checkAround()
+                self.touchRelease.emit()
         
         elif self.state == "explodeState":
             pass
@@ -146,6 +147,8 @@ class mineGrid(QPushButton):
             if e.buttons() == (Qt.LeftButton | Qt.RightButton) or e.button() == Qt.MidButton:
                 print("左右键同时按下，有效")
                 self.leftRight = True
+                self.touchPress.emit()
+                
         
         elif self.state == "explodeState":
             pass
