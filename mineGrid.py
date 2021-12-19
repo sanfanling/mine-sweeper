@@ -16,11 +16,11 @@ class mineGrid(QPushButton):
         super().__init__()
         self.value = value
         self.leftRight = False
-        self.blankState()
+        self.setBlankState()
         
     
     # under blankState, accept left click (check the blank) and right click (change to markState), ignore mid click
-    def blankState(self):
+    def setBlankState(self):
         self.state = "blankState"
         self.setDown(False)
         self.setFlat(False)
@@ -28,35 +28,35 @@ class mineGrid(QPushButton):
         self.setIcon(QIcon(""))
     
     # under markState, accept right click (change to questionState), ignore left click and mid click 
-    def markState(self):
+    def setMarkState(self):
         self.state = "markState"
         self.setFlat(False)
         self.setText("")
         self.setIcon(QIcon("sources/mark.png"))
     
     # under questionState, accept right click (change to blankState), ignore left click and mid click
-    def questionState(self):
+    def setQuestionState(self):
         self.state = "questionState"
         self.setFlat(False)
         self.setText("")
         self.setIcon(QIcon("sources/question.png"))
     
     # under numberState, only accept mid click
-    def numberState(self):
+    def setNumberState(self):
         self.state = "numberState"
         self.setFlat(True)
         self.setText(str(self.value))
         self.setIcon(QIcon(""))
     
     # under explodeState, game over
-    def explodeState(self):
+    def setExplodeState(self):
         self.state = "explodeState"
         self.setFlat(False)
         self.setText("")
         self.setIcon(QIcon("sources/explode.png"))
     
     # under zeroState, ignore all mouse mouse event
-    def zeroState(self):
+    def setZeroState(self):
         self.state = "zeroState"
         self.setFlat(True)
         self.setText("")
@@ -76,27 +76,27 @@ class mineGrid(QPushButton):
             self.setDown(False)
             if e.button() == Qt.LeftButton and not self.leftRight:
                 if 1 <= self.value <= 9:
-                    self.numberState()
+                    self.setNumberState()
                 elif self.value == 0:
                     self.zeroTouched.emit()
                 elif self.value == -1:
-                    self.explodeState()
+                    self.setExplodeState()
             elif e.button() == Qt.RightButton and not self.leftRight:
-                self.markState()
+                self.setMarkState()
             elif e.buttons() == Qt.NoButton and self.leftRight:
                 self.leftRight = False
         
         elif self.state == "markState":
             self.setDown(False)
             if e.button() == Qt.RightButton and not self.leftRight:
-                self.questionState()
+                self.setQuestionState()
             elif e.buttons() == Qt.NoButton and self.leftRight:
                 self.leftRight = False
         
         elif self.state == "questionState":
             self.setDown(False)
             if e.button() == Qt.RightButton and not self.leftRight:
-                self.blankState()
+                self.setBlankState()
             elif e.buttons() == Qt.NoButton and self.leftRight:
                 self.leftRight = False
         

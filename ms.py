@@ -5,7 +5,7 @@
 
 
 from PyQt5.QtWidgets import *
-from mainGui import mainGui
+from mainGui import mainWidnow
 import sys
 
 

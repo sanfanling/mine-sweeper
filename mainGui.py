@@ -5,19 +5,21 @@
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from PyQt5.QtGui import * 
+from PyQt5.QtGui import *
+from baseWindow import baseWindow
 from mineGrid import mineGrid
 from libms import mineSweeper
 import sys
 
 
-class mainGui(QWidget):
+class mainWindow(baseWindow):
     
     def __init__(self):
         super().__init__()
-        self.row = 20
-        self.column = 50
-        self.mines = 300
+        self.row = 10
+        self.column = 20
+        self.mines = 20
+        self.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
         game = mineSweeper(self.row, self.column, self.mines)
         sources = game.generate()
         print(sources)
@@ -33,14 +35,22 @@ class mainGui(QWidget):
                 eval("self.grid{}_{}.touchPress.connect(self.touchPress_)".format(i, j))
                 eval("self.grid{}_{}.touchRelease.connect(self.touchRelease_)".format(i, j))
                 eval("self.grid{}_{}.zeroTouched.connect(self.zeroTouched_)".format(i, j))
-        self.res = QPushButton("Restore", self)
+        
+        wid = QWidget()
         mainLayout = QVBoxLayout(None)
         mainLayout.setSizeConstraint(3)
-        mainLayout.addLayout(gridLayout)
-        mainLayout.addWidget(self.res)
-        self.setLayout(mainLayout)
         
-        self.res.clicked.connect(self.restore)
+        layout = QHBoxLayout(None)
+        layout.setContentsMargins(0, 0, 0, 30)
+        layout.addWidget(self.minesLeftLcd)
+        layout.addWidget(self.newGameButton)
+        layout.addWidget(self.timeUsageLcd)
+        
+        mainLayout.addLayout(layout)
+        mainLayout.addLayout(gridLayout)
+        wid.setLayout(mainLayout)
+        
+        self.setCentralWidget(wid)
     
     def getNearPos(self, row, col, key):
         direction = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1)]
@@ -69,7 +79,7 @@ class mainGui(QWidget):
     def zeroTouched_(self):
         b = self.autoZeroState((self.sender().row, self.sender().col), [])
         for r, c in b:
-            eval("self.grid{}_{}.zeroState()".format(r, c))
+            eval("self.grid{}_{}.setZeroState()".format(r, c))
     
     def autoZeroState(self, zp, blockList = []):
         row, col = zp
@@ -81,46 +91,38 @@ class mainGui(QWidget):
                 if eval("self.grid{}_{}.value == 0".format(newRow, newCol)) and (newRow, newCol) not in blockList:
                     self.autoZeroState((newRow, newCol), blockList)
                 else:
-                    eval("self.grid{}_{}.numberState()".format(newRow, newCol))
+                    eval("self.grid{}_{}.setNumberState()".format(newRow, newCol))
         return blockList
         
+    def operateGridTogether(self, expression, tmpList):
+        for r, c in tmpList:
+            eval("self.grid{}_{}.{}".format(r, c, expression))
     
     def touchRelease_(self):
         minePoslist = self.getNearPos(self.sender().row, self.sender().col, "markState")
         blankPoslist = self.getNearPos(self.sender().row, self.sender().col, "blankState")
         mineNum = len(minePoslist)
         if mineNum != self.sender().value:
-            for r, c in blankPoslist:
-                eval("self.grid{}_{}.setDown(False)".format(r, c))
+            self.operateGridTogether("setDown(False)", blankPoslist)
         else:
             wrongMark = self.checkMark(minePoslist)
             if wrongMark == []:
+                self.operateGridTogether("setDown(False)", blankPoslist)
                 z = []
                 for r1, c1 in blankPoslist:
-                    eval("self.grid{}_{}.setDown(False)".format(r1, c1))
                     eval("z.append(self.grid{}_{}.value)".format(r1, c1))
+                
                 if 0 not in z:
-                    for r5, c5 in blankPoslist:
-                        eval("self.grid{}_{}.numberState()".format(r5, c5))
+                    self.operateGridTogether("setNumberState()", blankPoslist)
                 else:
                     zeroPos = blankPoslist[z.index(0)]
                     blockList = self.autoZeroState(zeroPos, [])
-                    for r4, c4 in blockList:
-                        eval("self.grid{}_{}.zeroState()".format(r4, c4))
+                    self.operateGridTogether("setZeroState()", blockList)
             else:
-                for r2, c2 in wrongMark:
-                    eval("self.grid{}_{}.explodeState()".format(r2, c2))
-                for r3, c3 in blankPoslist:
-                    eval("self.grid{}_{}.setDown(False)".format(r3, c3))
+                self.operateGridTogether("setExplodeState()", wrongMark)
+                self.operateGridTogether("setDown(False)", blankPoslist)
                     # game over
     
     def touchPress_(self):
-        for r, c in self.getNearPos(self.sender().row, self.sender().col, "blankState"):
-            eval("self.grid{}_{}.setDown(True)".format(r, c))
-        
-    
-    def restore(self):
-        for i in range(self.row):
-            for j in range(self.column):
-                eval("self.grid{}_{}.blankState()".format(i, j))
+        self.operateGridTogether("setDown(True)", self.getNearPos(self.sender().row, self.sender().col, "blankState"))
  
