@@ -4,14 +4,14 @@
 #licence: GPL-V3
 
 
-from PyQt5.QtWidgets import *
-from mainGui import mainWidnow
+from PyQt5.QtWidgets import QApplication
+from mainWindow import mainWindow
 import sys
 
 
 def main():
     app = QApplication(sys.argv)
-    w = mainGui()
+    w = mainWindow()
     w.show()
     sys.exit(app.exec_()) 
 

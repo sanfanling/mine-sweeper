@@ -19,10 +19,14 @@ class baseWindow(QMainWindow):
 
     def initMenubar(self):
         gameMenu = self.menuBar().addMenu("Game")
-        self.startAction = QAction("Start", self)
+        self.newAction = QAction("New game", self)
+        self.replayAction = QAction("Re-play", self)
+        self.replayAction.setEnabled(False)
         self.checkRecordsAction = QAction("Check records...", self)
         self.quitAction = QAction("Quit", self)
-        gameMenu.addAction(self.startAction)
+        gameMenu.addAction(self.newAction)
+        gameMenu.addAction(self.replayAction)
+        gameMenu.addSeparator()
         gameMenu.addAction(self.checkRecordsAction)
         gameMenu.addSeparator()
         gameMenu.addAction(self.quitAction)
@@ -56,5 +60,7 @@ class baseWindow(QMainWindow):
     
     def initPanelWidget(self):
         self.minesLeftLcd = QLCDNumber(self)
-        self.newGameButton = QPushButton("Restart", self)
+        self.newGameButton = QPushButton("New game", self)
+        self.replayButton = QPushButton("Re-play", self)
+        self.replayButton.setEnabled(False)
         self.timeUsageLcd = QLCDNumber(self)

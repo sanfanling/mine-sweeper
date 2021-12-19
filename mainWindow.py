@@ -16,10 +16,22 @@ class mainWindow(baseWindow):
     
     def __init__(self):
         super().__init__()
-        self.row = 10
-        self.column = 20
-        self.mines = 20
+        self.setWindowTitle("mine sweeper")
+        self.row = 16
+        self.column = 30
+        self.mines = 99
         self.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
+        
+        self.initGame()
+        
+        
+        self.newAction.triggered.connect(self.initGame)
+        self.newGameButton.clicked.connect(self.initGame)
+        self.aboutGameAction.triggered.connect(self.aboutGameAction_)
+        self.aboutQtAction.triggered.connect(self.aboutQtAction_)
+        self.quitAction.triggered.connect(self.close)
+    
+    def initGame(self):
         game = mineSweeper(self.row, self.column, self.mines)
         sources = game.generate()
         print(sources)
@@ -44,6 +56,7 @@ class mainWindow(baseWindow):
         layout.setContentsMargins(0, 0, 0, 30)
         layout.addWidget(self.minesLeftLcd)
         layout.addWidget(self.newGameButton)
+        layout.addWidget(self.replayButton)
         layout.addWidget(self.timeUsageLcd)
         
         mainLayout.addLayout(layout)
@@ -51,7 +64,7 @@ class mainWindow(baseWindow):
         wid.setLayout(mainLayout)
         
         self.setCentralWidget(wid)
-    
+        
     def getNearPos(self, row, col, key):
         direction = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1)]
         posList = []
@@ -125,4 +138,13 @@ class mainWindow(baseWindow):
     
     def touchPress_(self):
         self.operateGridTogether("setDown(True)", self.getNearPos(self.sender().row, self.sender().col, "blankState"))
+    
+    def aboutQtAction_(self):
+        QMessageBox.aboutQt(self, "About Qt")
+    
+    def aboutGameAction_(self):
+        QMessageBox.about(self, "About mine sweeper", "It's a Linux game cloned from classic windows game, written with PyQt.\n\nAuthor: sanfanling (xujia19@outlook.con)")
+    
+    def closeEvent(self, e):
+        e.accept()
  
