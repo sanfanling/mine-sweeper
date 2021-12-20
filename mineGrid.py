@@ -9,16 +9,24 @@ from PyQt5.QtGui import *
 
 
 class mineGrid(QPushButton):
+    
     touchPress = pyqtSignal()
     touchRelease = pyqtSignal()
     zeroTouched = pyqtSignal()
-    def __init__(self, value): # value理论上为0-9,0意味着周边没有雷，表象上应该是灰色不可按；如value == -1,定义为“雷”
+    mineTouched = pyqtSignal()
+    mineMarked = pyqtSignal()
+    
+    def __init__(self, value = 0): # value理论上为0-8,0意味着周边没有雷，表象上应该是灰色不可按；如value == -1,定义为“雷”
         super().__init__()
         self.value = value
         self.leftRight = False
         self.setBlankState()
+        #myPolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum, QSizePolicy.PushButton)
+        #myPolicy.setHeightForWidth(True)
+        #self.setSizePolicy(myPolicy)
         
-    
+    def setValue(self, v):
+        self.value = v
     # under blankState, accept left click (check the blank) and right click (change to markState), ignore mid click
     def setBlankState(self):
         self.state = "blankState"
@@ -62,6 +70,15 @@ class mineGrid(QPushButton):
         self.setText("")
         self.setIcon(QIcon(""))
     
+    def setMineState(self):
+        self.state = "mineState"
+        self.setFlat(False)
+        self.setText("")
+        self.setIcon(QIcon("sources/mine.png"))
+    
+    def setDisableState(self):
+        self.state = "disableState"
+    
     
     def mouseReleaseEvent(self, e):
         if not self.rect().contains(e.pos()):
@@ -75,14 +92,16 @@ class mineGrid(QPushButton):
         if self.state == "blankState":
             self.setDown(False)
             if e.button() == Qt.LeftButton and not self.leftRight:
-                if 1 <= self.value <= 9:
+                if 1 <= self.value <= 8:
                     self.setNumberState()
                 elif self.value == 0:
                     self.zeroTouched.emit()
                 elif self.value == -1:
                     self.setExplodeState()
+                    self.mineTouched.emit()
             elif e.button() == Qt.RightButton and not self.leftRight:
                 self.setMarkState()
+                self.mineMarked.emit()
             elif e.buttons() == Qt.NoButton and self.leftRight:
                 self.leftRight = False
         
@@ -110,6 +129,8 @@ class mineGrid(QPushButton):
             pass
         
         elif self.state == "zeroState":
+            pass
+        elif self.state == "disableState":
             pass
         
     def mouseMoveEvent(self, e):
@@ -156,6 +177,9 @@ class mineGrid(QPushButton):
         elif self.state == "zeroState":
             pass
         
+        elif self.state == "disableState":
+            pass
+        
     
     def sizeHint(self):
-        return QSize(25, 25)
+       return QSize(25, 25)

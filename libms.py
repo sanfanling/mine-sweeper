@@ -24,20 +24,21 @@ class mineSweeper:
         else:
             self.base = zeros((self.height, self.width), dtype = "int")
         
+        self.minesMap = []
+        
         
     def generate(self):
         self.__getMines()
         self.__detectMines()
-        return self.base        
+        return self.base, self.minesMap
 
     def __getMines(self):
-        posList = []
-        while len(posList) < self.mines:
+        while len(self.minesMap) < self.mines:
             heightPos = random.choice(range(self.height))
             widthPos = random.choice(range(self.width))
-            if (heightPos, widthPos) not in posList:
-                posList.append((heightPos, widthPos))
-        for i, j in posList:
+            if (heightPos, widthPos) not in self.minesMap:
+                self.minesMap.append((heightPos, widthPos))
+        for i, j in self.minesMap:
             self.base[i][j] = -1        
 
     def __detectMines(self):
