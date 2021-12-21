@@ -22,7 +22,7 @@ class mainWindow(baseWindow):
         self.row, self.column, self.mines = self.modeDict[self.mode]
         eval("self.{}Action.setChecked(True)".format(self.mode.lower()))
         
-        #self.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
+        self.originalGridPal = mineGrid.palette(self)
         
         self.initBoard()
         self.initGame()
@@ -44,12 +44,17 @@ class mainWindow(baseWindow):
         for i in range(self.row):
             for j in range(self.column):
                 exec("self.grid{}_{} = mineGrid()".format(i, j))
+                exec("self.grid{}_{}.row = {}".format(i, j, i))
+                exec("self.grid{}_{}.col = {}".format(i, j, j))
                 eval("gridLayout.addWidget(self.grid{}_{}, {}, {})".format(i, j, i, j))
                 eval("self.grid{}_{}.touchPress.connect(self.touchPress_)".format(i, j))
                 eval("self.grid{}_{}.touchRelease.connect(self.touchRelease_)".format(i, j))
                 eval("self.grid{}_{}.zeroTouched.connect(self.zeroTouched_)".format(i, j))
                 eval("self.grid{}_{}.mineTouched.connect(self.gameFailed)".format(i, j))
-                eval("self.grid{}_{}.mineMarked.connect(self.reduceMines)".format(i, j))
+                eval("self.grid{}_{}.mineMarked.connect(self.mineMarked_)".format(i, j))
+                eval("self.grid{}_{}.cancelMineMarked.connect(self.cancelMineMarked_)".format(i, j))
+                eval("self.grid{}_{}.numberMarked.connect(self.checkWin)".format(i, j))
+                
         
         wid = QWidget()
         mainLayout = QVBoxLayout(None)
@@ -75,13 +80,16 @@ class mainWindow(baseWindow):
     
     def initGame(self):
         game = mineSweeper(self.row, self.column, self.mines)
-        self.sourcesMap, self.minesMap = game.generate()
+        game.generate()
+        self.sourcesMap = game.base
+        self.minesMap = game.minesMap
+        self.markedMinesMap = []
         print(self.sourcesMap)
         for i in range(self.row):
             for j in range(self.column):
                 eval("self.grid{}_{}.setValue(self.sourcesMap[{}][{}])".format(i, j, i, j))
-                exec("self.grid{}_{}.row = {}".format(i, j, i))
-                exec("self.grid{}_{}.col = {}".format(i, j, j))
+                eval("self.grid{}_{}.setPalette(self.originalGridPal)".format(i, j))
+                
         self.minesLeftLcd.display(self.mines)
     
     def newGame(self):
@@ -89,9 +97,11 @@ class mainWindow(baseWindow):
         self.initGame()
     
     def restoreBoard(self):
+        self.markedMinesMap = []
         for i in range(self.row):
             for j in range(self.column):
                 eval("self.grid{}_{}.setBlankState()".format(i, j))
+                eval("self.grid{}_{}.setPalette(self.originalGridPal)".format(i, j))
     
     def changeMode_(self):
         if self.mode != self.sender().text():
@@ -126,11 +136,13 @@ class mainWindow(baseWindow):
         return wrongList
     
     def zeroTouched_(self):
-        b = self.autoZeroState((self.sender().row, self.sender().col), [])
-        for r, c in b:
-            eval("self.grid{}_{}.setZeroState()".format(r, c))
+        b, n = self.autoZeroState((self.sender().row, self.sender().col), [], [])
+        self.operateGridTogether("setZeroState()", b)
+        self.operateGridTogether("setNumberState()", n)
+        self.checkWin()
+            
     
-    def autoZeroState(self, zp, blockList = []):
+    def autoZeroState(self, zp, blockList = [], numberList = []):
         row, col = zp
         blockList.append(zp)
         for offsetRow, offsetCol in [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1)]:
@@ -138,55 +150,78 @@ class mainWindow(baseWindow):
             newCol = col + offsetCol
             if newRow in range(0, self.row) and newCol in range(0, self.column):
                 if eval("self.grid{}_{}.value == 0".format(newRow, newCol)) and (newRow, newCol) not in blockList:
-                    self.autoZeroState((newRow, newCol), blockList)
-                else:
-                    eval("self.grid{}_{}.setNumberState()".format(newRow, newCol))
-        return blockList
+                    self.autoZeroState((newRow, newCol), blockList, numberList)
+                elif (newRow, newCol) not in numberList and eval("1 <= self.grid{}_{}.value <= 8".format(newRow, newCol)):
+                    numberList.append((newRow, newCol))
+        return blockList, numberList
         
     def operateGridTogether(self, expression, tmpList):
         for r, c in tmpList:
             eval("self.grid{}_{}.{}".format(r, c, expression))
     
     def touchRelease_(self):
-        minePoslist = self.getNearPos(self.sender().row, self.sender().col, "markState")
-        blankPoslist = self.getNearPos(self.sender().row, self.sender().col, "blankState")
+        minePoslist = self.getNearPos(self.sender().row, self.sender().col, "markState")  #邻居雷位置
+        blankPoslist = self.getNearPos(self.sender().row, self.sender().col, "blankState") #邻居空白位置
+        questionPosList = self.getNearPos(self.sender().row, self.sender().col, "questionState") #邻居问号位置
+        blankAndQuestionPosList = blankPoslist + questionPosList #邻居空白+问号位置
+        
         mineNum = len(minePoslist)
         if mineNum != self.sender().value:
-            self.operateGridTogether("setDown(False)", blankPoslist)
+            self.operateGridTogether("setDown(False)", blankAndQuestionPosList)
         else:
             wrongMark = self.checkMark(minePoslist)
             if wrongMark == []:
-                self.operateGridTogether("setDown(False)", blankPoslist)
+                self.operateGridTogether("setDown(False)", blankAndQuestionPosList)
                 z = []
-                for r1, c1 in blankPoslist:
+                for r1, c1 in blankAndQuestionPosList:
                     eval("z.append(self.grid{}_{}.value)".format(r1, c1))
                 
                 if 0 not in z:
-                    self.operateGridTogether("setNumberState()", blankPoslist)
+                    self.operateGridTogether("setNumberState()", blankAndQuestionPosList)
                 else:
-                    zeroPos = blankPoslist[z.index(0)]
-                    blockList = self.autoZeroState(zeroPos, [])
+                    zeroPos = blankAndQuestionPosList[z.index(0)]
+                    blockList, numberList = self.autoZeroState(zeroPos, [], [])
                     self.operateGridTogether("setZeroState()", blockList)
+                    self.operateGridTogether("setNumberState()", numberList)
+                self.checkWin()
             else:
-                self.operateGridTogether("setExplodeState()", wrongMark)
-                self.operateGridTogether("setDown(False)", blankPoslist)
-                self.gameFailed(wrongMark)
+                self.operateGridTogether("setDown(False)", blankAndQuestionPosList)
+                self.gameFailed(False)
                 
     
     def touchPress_(self):
-        self.operateGridTogether("setDown(True)", self.getNearPos(self.sender().row, self.sender().col, "blankState"))
+        self.operateGridTogether("setDown(True)", self.getNearPos(self.sender().row, self.sender().col, "blankState questionState"))
     
-    def gameFailed(self, ex = []):
-        if ex == []:
-            ex = [(self.sender().row, self.sender().col)]
-        c = list(set(self.minesMap) - set(ex))
-        self.operateGridTogether("setMineState()", c)
+    def gameFailed(self, clickFailed = True):
+        t1 = list(set(self.markedMinesMap) - set(self.minesMap))
+        self.operateGridTogether("setMarkWrongState()", t1)
+        if clickFailed:
+            self.markedMinesMap.append((self.sender().row, self.sender().col))
+        t2 = list(set(self.minesMap) - set(self.markedMinesMap))
+        self.operateGridTogether("setMineState()", t2)
+        
         for i in range(0, self.row):
             for j in range(0, self.column):
                 eval("self.grid{}_{}.setDisableState()".format(i, j))
     
-    def reduceMines(self):
-        self.minesLeftLcd.display(self.minesLeftLcd.intValue() - 1)
+    def mineMarked_(self):
+        self.markedMinesMap.append((self.sender().row, self.sender().col))
+        self.minesLeftLcd.display(self.mines - len(self.markedMinesMap))
+    
+    def cancelMineMarked_(self):
+        self.markedMinesMap.remove((self.sender().row, self.sender().col))
+        self.minesLeftLcd.display(self.mines - len(self.markedMinesMap))
+    
+    def checkWin(self):
+        tmpList = []
+        for i in range(0, self.row):
+            for j in range(0, self.column):
+                if eval("self.grid{}_{}.state == 'blankState' or self.grid{}_{}.state == 'questionState'".format(i, j, i, j)):
+                    tmpList.append((i, j))
+        if set(tmpList) == set(self.minesMap) - set(self.markedMinesMap):
+            self.operateGridTogether("setMarkState()", tmpList)
+            self.minesLeftLcd.display(0)
+            print("Win")
     
     def aboutQtAction_(self):
         QMessageBox.aboutQt(self, "About Qt")

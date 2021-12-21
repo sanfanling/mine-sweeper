@@ -30,7 +30,6 @@ class mineSweeper:
     def generate(self):
         self.__getMines()
         self.__detectMines()
-        return self.base, self.minesMap
 
     def __getMines(self):
         while len(self.minesMap) < self.mines:

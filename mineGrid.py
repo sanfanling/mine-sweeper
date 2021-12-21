@@ -15,18 +15,18 @@ class mineGrid(QPushButton):
     zeroTouched = pyqtSignal()
     mineTouched = pyqtSignal()
     mineMarked = pyqtSignal()
+    cancelMineMarked = pyqtSignal()
+    numberMarked = pyqtSignal()
     
     def __init__(self, value = 0): # value理论上为0-8,0意味着周边没有雷，表象上应该是灰色不可按；如value == -1,定义为“雷”
         super().__init__()
         self.value = value
         self.leftRight = False
         self.setBlankState()
-        #myPolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum, QSizePolicy.PushButton)
-        #myPolicy.setHeightForWidth(True)
-        #self.setSizePolicy(myPolicy)
         
     def setValue(self, v):
         self.value = v
+        
     # under blankState, accept left click (check the blank) and right click (change to markState), ignore mid click
     def setBlankState(self):
         self.state = "blankState"
@@ -53,6 +53,10 @@ class mineGrid(QPushButton):
     def setNumberState(self):
         self.state = "numberState"
         self.setFlat(True)
+        pal = self.palette()
+        colorDict = {1: QColor(0, 0, 254), 2: QColor(0, 128, 0), 3: QColor(254, 0, 0), 4: QColor(0, 0, 128), 5: QColor(128, 0, 0), 6: QColor(128, 128, 0), 7: QColor(0, 0, 0), 8: QColor(128, 128, 128)}
+        pal.setColor(QPalette.WindowText, colorDict[self.value])
+        self.setPalette(pal)
         self.setText(str(self.value))
         self.setIcon(QIcon(""))
     
@@ -61,8 +65,17 @@ class mineGrid(QPushButton):
         self.state = "explodeState"
         self.setFlat(False)
         self.setText("")
-        self.setIcon(QIcon("sources/explode.png"))
+        pal = self.palette()
+        pal.setColor(QPalette.Button, Qt.red)
+        self.setPalette(pal)
+        self.setIcon(QIcon("sources/mine.png"))
     
+    def setMarkWrongState(self):
+        self.state = "markWrongState"
+        self.setFlat(False)
+        self.setText("")
+        self.setIcon(QIcon("sources/wrong.png"))
+        
     # under zeroState, ignore all mouse mouse event
     def setZeroState(self):
         self.state = "zeroState"
@@ -94,6 +107,7 @@ class mineGrid(QPushButton):
             if e.button() == Qt.LeftButton and not self.leftRight:
                 if 1 <= self.value <= 8:
                     self.setNumberState()
+                    self.numberMarked.emit()
                 elif self.value == 0:
                     self.zeroTouched.emit()
                 elif self.value == -1:
@@ -109,6 +123,7 @@ class mineGrid(QPushButton):
             self.setDown(False)
             if e.button() == Qt.RightButton and not self.leftRight:
                 self.setQuestionState()
+                self.cancelMineMarked.emit()
             elif e.buttons() == Qt.NoButton and self.leftRight:
                 self.leftRight = False
         
@@ -121,17 +136,9 @@ class mineGrid(QPushButton):
         
         elif self.state == "numberState":
             if (e.button() == Qt.LeftButton and self.leftRight and e.buttons() == Qt.NoButton) or (e.button() == Qt.RightButton and self.leftRight and e.buttons() == Qt.NoButton) or e.button() == Qt.MidButton:
-                print("左右键同时释放")
+                #print("左右键同时释放")
                 self.leftRight = False
                 self.touchRelease.emit()
-        
-        elif self.state == "explodeState":
-            pass
-        
-        elif self.state == "zeroState":
-            pass
-        elif self.state == "disableState":
-            pass
         
     def mouseMoveEvent(self, e):
         self.setDown(False)
@@ -160,7 +167,7 @@ class mineGrid(QPushButton):
                 self.setDown(True)
                 self.leftRight = False
             if (e.buttons() == Qt.LeftButton | Qt.RightButton) or e.button() == Qt.MidButton:
-                print("左右键同时按下，但被屏蔽")
+                #print("左右键同时按下，但被屏蔽")
                 self.setDown(True)
                 self.leftRight = True
         
@@ -169,17 +176,6 @@ class mineGrid(QPushButton):
                 print("左右键同时按下，有效")
                 self.leftRight = True
                 self.touchPress.emit()
-                
-        
-        elif self.state == "explodeState":
-            pass
-        
-        elif self.state == "zeroState":
-            pass
-        
-        elif self.state == "disableState":
-            pass
-        
     
     def sizeHint(self):
        return QSize(25, 25)
