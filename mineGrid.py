@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# filename: mainGui.py
+#File name: mineGrid.py
+#Author: sanfanling
 #licence: GPL-V3
 
 from PyQt5.QtWidgets import *

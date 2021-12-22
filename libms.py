@@ -1,8 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+#File name: libms.py
 #Author: sanfanling
-#program name: libms.py
 #license: GPL-V3
 
 import random
@@ -18,12 +17,9 @@ class mineSweeper:
         try:
             from numpy import zeros
         except ModuleNotFoundError:
-            self.base = []
-            for i in range(self.height):
-                self.base.append([0 for j in range(self.width)])
+            self.base = [[0 for i in range(self.width)] for j in range(self.height)]
         else:
             self.base = zeros((self.height, self.width), dtype = "int")
-        
         self.minesMap = []
         
         
@@ -38,7 +34,7 @@ class mineSweeper:
             if (heightPos, widthPos) not in self.minesMap:
                 self.minesMap.append((heightPos, widthPos))
         for i, j in self.minesMap:
-            self.base[i][j] = -1        
+            self.base[i][j] = -1
 
     def __detectMines(self):
         for i in range(self.height):
@@ -62,12 +58,9 @@ class mineSweeper:
                     mn += 1
         return mn
 
-
-
-
 def main():
-    a = mineSweeper(15, 20, 80)
-    print(a.generate())
+    a = mineSweeper(3, 9, 10)
+    a.generate()
 
 if __name__ == "__main__":
     main()

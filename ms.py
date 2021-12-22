@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# filename: ms.py
+#File name: ms.py
+#Author: sanfanling
 #licence: GPL-V3
 
 

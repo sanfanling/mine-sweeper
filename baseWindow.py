@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# filename: baseWindow.py
+#File name: baseWindow.py
+#Author: sanfanling
 #licence: GPL-V3
 
 from PyQt5.QtWidgets import *
@@ -21,12 +22,12 @@ class baseWindow(QMainWindow):
         gameMenu = self.menuBar().addMenu("Game")
         self.newAction = QAction("New game", self)
         self.replayAction = QAction("Re-play", self)
-        self.checkRecordsAction = QAction("Check records...", self)
+        self.statisticsAction = QAction("Statistics...", self)
         self.quitAction = QAction("Quit", self)
         gameMenu.addAction(self.newAction)
         gameMenu.addAction(self.replayAction)
         gameMenu.addSeparator()
-        gameMenu.addAction(self.checkRecordsAction)
+        gameMenu.addAction(self.statisticsAction)
         gameMenu.addSeparator()
         gameMenu.addAction(self.quitAction)
         

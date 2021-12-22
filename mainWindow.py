@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# filename: mainGui.py
+#File name: mainWindow.py
+#Author: sanfanling
 #licence: GPL-V3
 
 from PyQt5.QtWidgets import *
@@ -17,19 +18,22 @@ class mainWindow(baseWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("mine sweeper")
+        self.setWindowIcon(QIcon("sources/mine.png"))
+        
         self.mode = "Easy"
         self.modeDict = {"Easy": (9, 9, 10), "Medium": (16, 16, 40), "Difficult": (16, 30, 99), "Custom": (20, 50, 200)}
         self.row, self.column, self.mines = self.modeDict[self.mode]
         eval("self.{}Action.setChecked(True)".format(self.mode.lower()))
-        
+        self.myTimer = QTimer()
+        self.timeUsage = 0
         self.originalGridPal = mineGrid.palette(self)
         
-        self.initBoard()
-        self.initGame()
+        self.virtualNewWorld()
         
-        self.newAction.triggered.connect(self.newGame)
-        self.newGameButton.clicked.connect(self.newGame)
-        self.replayAction.triggered.connect(self.restoreBoard)
+        self.myTimer.timeout.connect(self.timeDisplay)
+        self.newAction.triggered.connect(self.virtualNewGame)
+        self.newGameButton.clicked.connect(self.virtualNewGame)
+        self.replayAction.triggered.connect(self.virtualReplay)
         self.aboutGameAction.triggered.connect(self.aboutGameAction_)
         self.aboutQtAction.triggered.connect(self.aboutQtAction_)
         self.quitAction.triggered.connect(self.close)
@@ -76,6 +80,8 @@ class mainWindow(baseWindow):
         
         self.setCentralWidget(wid)
         self.adjustSize()
+        w = int(QApplication.desktop().availableGeometry(self).width() / 2 - self.width())
+        self.move(w, 200)
     
     def initGame(self):
         game = mineSweeper(self.row, self.column, self.mines)
@@ -83,21 +89,35 @@ class mainWindow(baseWindow):
         self.sourcesMap = game.base
         self.minesMap = game.minesMap
         self.markedMinesMap = []
-        print(self.sourcesMap)
+        #print(self.sourcesMap)
         for i in range(self.row):
             for j in range(self.column):
                 wid = self.gridLayout.itemAtPosition(i, j).widget()
                 wid.setValue(self.sourcesMap[i][j])
                 wid.setPalette(self.originalGridPal)
                 
-        self.minesLeftLcd.display(self.mines)
-    
-    def newGame(self):
-        self.restoreBoard()
+    def virtualNewGame(self):
+        self.restoreGrids()
         self.initGame()
+        self.initExtra()
     
-    def restoreBoard(self):
+    def virtualReplay(self):
+        self.restoreGrids()
+        self.initExtra()
+    
+    def virtualNewWorld(self):
+        self.initBoard()
+        self.initGame()
+        self.initExtra()
+    
+    def initExtra(self):
         self.markedMinesMap = []
+        self.timeUsage = 0
+        self.minesLeftLcd.display(self.mines)
+        self.timeUsageLcd.display(0)
+        self.myTimer.start(1000)
+    
+    def restoreGrids(self):
         for i in range(self.row):
             for j in range(self.column):
                 wid = self.gridLayout.itemAtPosition(i, j).widget()
@@ -108,8 +128,8 @@ class mainWindow(baseWindow):
         if self.mode != self.sender().text():
             self.mode = self.sender().text()
             self.row, self.column, self.mines = self.modeDict[self.mode]
-            self.initBoard()
-            self.initGame()
+            self.virtualNewWorld()
+            
             
         
     def getNearPos(self, row, col, key):
@@ -197,6 +217,8 @@ class mainWindow(baseWindow):
             self.markedMinesMap.append((self.sender().row, self.sender().column))
         t2 = list(set(self.minesMap) - set(self.markedMinesMap))
         self.operateGridTogether("setMineState()", t2)
+        self.myTimer.stop()
+        print("Fail!")
         
         for i in range(0, self.row):
             for j in range(0, self.column):
@@ -210,6 +232,10 @@ class mainWindow(baseWindow):
         self.markedMinesMap.remove((self.sender().row, self.sender().column))
         self.minesLeftLcd.display(self.mines - len(self.markedMinesMap))
     
+    def timeDisplay(self):
+        self.timeUsage += 1
+        self.timeUsageLcd.display(self.timeUsage)
+    
     def checkWin(self):
         tmpList = []
         for i in range(0, self.row):
@@ -219,7 +245,8 @@ class mainWindow(baseWindow):
         if set(tmpList) == set(self.minesMap) - set(self.markedMinesMap):
             self.operateGridTogether("setMarkState()", tmpList)
             self.minesLeftLcd.display(0)
-            print("Win")
+            self.myTimer.stop()
+            print("Win! time: {} seconds".format(self.timeUsage))
     
     def aboutQtAction_(self):
         QMessageBox.aboutQt(self, "About Qt")
