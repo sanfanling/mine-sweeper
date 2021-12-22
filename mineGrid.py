@@ -18,11 +18,17 @@ class mineGrid(QPushButton):
     cancelMineMarked = pyqtSignal()
     numberMarked = pyqtSignal()
     
-    def __init__(self, value = 0): # value理论上为0-8,0意味着周边没有雷，表象上应该是灰色不可按；如value == -1,定义为“雷”
+    def __init__(self, row, column, value = 0): # value理论上为0-8,0意味着周边没有雷，表象上应该是灰色不可按；如value == -1,定义为“雷”
         super().__init__()
         self.value = value
+        self.row = row
+        self.column = column
         self.leftRight = False
         self.setBlankState()
+        policy = self.sizePolicy()
+        policy.setHorizontalPolicy(QSizePolicy.Minimum)
+        policy.setVerticalPolicy(QSizePolicy.Minimum)
+        self.setSizePolicy(policy)
         
     def setValue(self, v):
         self.value = v
@@ -149,7 +155,7 @@ class mineGrid(QPushButton):
                 self.setDown(True)
                 self.leftRight = False
             if (e.buttons() == Qt.LeftButton | Qt.RightButton) or e.button() == Qt.MidButton:
-                print("左右键同时按下，但被屏蔽")
+                #print("左右键同时按下，但被屏蔽")
                 self.setDown(True)
                 self.leftRight = True
         
@@ -173,7 +179,7 @@ class mineGrid(QPushButton):
         
         elif self.state == "numberState":
             if e.buttons() == (Qt.LeftButton | Qt.RightButton) or e.button() == Qt.MidButton:
-                print("左右键同时按下，有效")
+                #print("左右键同时按下，有效")
                 self.leftRight = True
                 self.touchPress.emit()
     
