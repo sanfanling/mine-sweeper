@@ -256,7 +256,7 @@ class mainWindow(baseWindow):
         QMessageBox.aboutQt(self, "About Qt")
     
     def aboutGameAction_(self):
-        QMessageBox.about(self, "About mine sweeper", "It's a Linux game cloned from classic windows game, written with PyQt.\n\nAuthor: sanfanling (xujia19@outlook.con)")
+        QMessageBox.about(self, "About mine sweeper", "It's cloned from classic windows game, written with PyQt.\n\nAuthor: sanfanling (xujia19@outlook.con)")
     
     def closeEvent(self, e):
         e.accept()
