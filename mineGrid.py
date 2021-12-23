@@ -99,7 +99,10 @@ class mineGrid(QPushButton):
     def setDisableState(self):
         self.state = "disableState"
     
-    
+    def mouseDoubleClickEvent(self, e):
+        if e.button() == Qt.LeftButton:
+            self.touchRelease.emit()
+        
     def mouseReleaseEvent(self, e):
         if not self.rect().contains(e.pos()):
             if self.state == 'numberState' and self.leftRight:

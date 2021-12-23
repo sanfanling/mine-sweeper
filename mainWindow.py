@@ -247,6 +247,10 @@ class mainWindow(baseWindow):
             self.minesLeftLcd.display(0)
             self.myTimer.stop()
             print("Win! time: {} seconds".format(self.timeUsage))
+            
+            for i in range(0, self.row):
+                for j in range(0, self.column):
+                    self.gridLayout.itemAtPosition(i, j).widget().setDisableState()
     
     def aboutQtAction_(self):
         QMessageBox.aboutQt(self, "About Qt")
