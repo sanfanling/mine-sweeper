@@ -29,7 +29,7 @@ class mainWindow(baseWindow):
         self.originalGridPal = mineGrid.palette(self)
         
         self.virtualNewWorld()
-        
+
         self.myTimer.timeout.connect(self.timeDisplay)
         self.newAction.triggered.connect(self.virtualNewGame)
         self.newGameButton.clicked.connect(self.virtualNewGame)
