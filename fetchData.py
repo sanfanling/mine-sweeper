@@ -23,6 +23,7 @@ class fetchData:
         self.questionMark = self.cf.getboolean("options", "questionMark")
         self.autoStart = self.cf.getboolean("options", "autoStart")
         self.sound = self.cf.getboolean("options", "sound")
+        self.lastMode = self.cf.get("options", "lastMode")
         
         self.gridSize = self.cf.getint("options", "gridSize")
         self.numberSize = self.cf.getint("options", "numberSize")
@@ -46,6 +47,7 @@ class fetchData:
         sound = False
         gridSize = 25
         numberSize = 0
+        lastMode = easy
         
         
         [easyMode]

@@ -19,18 +19,22 @@ class mineGrid(QPushButton):
     cancelMineMarked = pyqtSignal()
     numberMarked = pyqtSignal()
     
-    def __init__(self, row, column, value = 0): # value理论上为0-8,0意味着周边没有雷，表象上应该是灰色不可按；如value == -1,定义为“雷”
+    def __init__(self, row, column, acceptQuestionMark = True, value = 0): # value理论上为0-8,0意味着周边没有雷，表象上应该是灰色不可按；如value == -1,定义为“雷”
         super().__init__()
         self.value = value
         self.row = row
         self.column = column
+        self.acceptQuestionMark = acceptQuestionMark
         self.leftRight = False
         self.setBlankState()
         policy = self.sizePolicy()
         policy.setHorizontalPolicy(QSizePolicy.Minimum)
         policy.setVerticalPolicy(QSizePolicy.Minimum)
         self.setSizePolicy(policy)
-        
+    
+    def setQuestionMark(self, b):
+        self.acceptQuestionMark = b
+    
     def setValue(self, v):
         self.value = v
         
@@ -131,7 +135,7 @@ class mineGrid(QPushButton):
         
         elif self.state == "markState":
             self.setDown(False)
-            if e.button() == Qt.RightButton and not self.leftRight:
+            if e.button() == Qt.RightButton and self.acceptQuestionMark and not self.leftRight:
                 self.setQuestionState()
                 self.cancelMineMarked.emit()
             elif e.buttons() == Qt.NoButton and self.leftRight:

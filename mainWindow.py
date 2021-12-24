@@ -10,6 +10,7 @@ from PyQt5.QtGui import *
 from baseWindow import baseWindow
 from mineGrid import mineGrid
 from libms import mineSweeper
+from settingDialog import settingDialog
 import sys
 
 
@@ -41,6 +42,7 @@ class mainWindow(baseWindow):
         self.mediumAction.triggered.connect(self.changeMode_)
         self.difficultAction.triggered.connect(self.changeMode_)
         self.customAction.triggered.connect(self.changeMode_)
+        self.settingAction.triggered.connect(self.settingAction_)
     
     def initBoard(self):
         self.gridLayout = QGridLayout(None)
@@ -251,6 +253,13 @@ class mainWindow(baseWindow):
             for i in range(0, self.row):
                 for j in range(0, self.column):
                     self.gridLayout.itemAtPosition(i, j).widget().setDisableState()
+    
+    def settingAction_(self):
+        dialog = settingDialog()
+        if dialog.exec_() == QDialog.Accepted:
+            pass
+        else:
+            pass
     
     def aboutQtAction_(self):
         QMessageBox.aboutQt(self, "About Qt")
