@@ -1,5 +1,5 @@
 # mine sweeper
-## It is a PyQt5 version of classic windows mine sweeper game. The final purpose of this application is no experience between clone version and windows classic version
+## It is a PyQt5 version of classic windows mine sweeper game. The final purpose of this application is no difference between clone version and windows classic version
 
 ### Dependency:
 * python >= 3.7
