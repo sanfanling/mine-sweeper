@@ -1,5 +1,5 @@
 # mine sweeper
-## mine sweeper is cloned from classic windows game, written with PyQt
+## It is a PyQt5 version of classic windows mine sweeper game. The final purpose of this application is no experience between clone version and windows classic version
 
 ### Dependency:
 * python >= 3.7
