@@ -13,7 +13,7 @@ import os.path
 class fetchData:
     
     def __init__(self):
-        self.fileName = "minesweeper.conf"
+        self.fileName = expanduser("~/.minesweeper.conf")
         if not os.path.exists(self.fileName):
             self.initConfigfile()
     
