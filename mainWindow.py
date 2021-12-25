@@ -12,6 +12,7 @@ from mineGrid import mineGrid
 from libms import mineSweeper
 from settingDialog import settingDialog
 from fetchData import fetchData
+import time
 import sys
 
 
@@ -21,6 +22,7 @@ class mainWindow(baseWindow):
         super().__init__()
         self.setWindowTitle("mine sweeper")
         self.setWindowIcon(QIcon("sources/mine.png"))
+        self.setSizePolicy(QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored))
         
         self.data = fetchData()
         self.data.getAllData()
@@ -36,7 +38,8 @@ class mainWindow(baseWindow):
         self.originalGridPal = self.palette()
         
         self.virtualNewWorld()
-
+        
+        self.statisticsAction.triggered.connect(self.adjustSize)
         self.myTimer.timeout.connect(self.timeDisplay)
         self.newAction.triggered.connect(self.virtualNewGame)
         self.newGameButton.clicked.connect(self.virtualNewGame)
@@ -89,7 +92,7 @@ class mainWindow(baseWindow):
         wid.setLayout(mainLayout)
         
         self.setCentralWidget(wid)
-        self.adjustSize()
+        #self.adjustSize()
         w = int(QApplication.desktop().availableGeometry(self).width() / 2 - self.width())
         self.move(w, 200)
     
@@ -284,6 +287,15 @@ class mainWindow(baseWindow):
             self.data.customSize = (dialog.customBox.customHeight.value(), dialog.customBox.customWidth.value(), dialog.customBox.customMines.value())
             
             # proceed questionMark
+            for x in range(self.row):
+                for y in range(self.column):
+                    w = self.gridLayout.itemAtPosition(x, y).widget()
+                    w.setQuestionMark(self.data.questionMark)
+                    if not self.data.questionMark and w.state == "questionState":
+                        w.setBlankState()
+            
+            
+            
             # proceed autoStart
             # proceed sound
             # procedd grid size
@@ -292,9 +304,9 @@ class mainWindow(baseWindow):
                 for j in range(self.column):
                     self.gridLayout.itemAtPosition(i, j).widget().setNumberSize(self.data.numberSize)
                     self.gridLayout.itemAtPosition(i, j).widget().setGridSize(self.data.gridSize)
-            self.adjustSize()
             
             self.modeDict["Custom"] = self.data.customSize
+            self.adjustSize()
     
     def aboutQtAction_(self):
         QMessageBox.aboutQt(self, "About Qt")

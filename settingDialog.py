@@ -46,9 +46,11 @@ class generalBox(QGroupBox):
         self.setTitle("General")
         self.setAlignment(Qt.AlignHCenter)
         
-        self.questionMark = QCheckBox("Use \"?\" mark", self)
+        self.questionMark = QCheckBox("Enable \"?\" mark in the game", self)
         self.autoStart = QCheckBox("Auto start at first", self)
+        self.autoStart.setEnabled(False)
         self.sound = QCheckBox("Enable sound effect", self)
+        self.sound.setEnabled(False)
         
         mainLayout = QVBoxLayout(None)
         mainLayout.addWidget(self.questionMark)

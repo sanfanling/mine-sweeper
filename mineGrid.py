@@ -143,8 +143,11 @@ class mineGrid(QPushButton):
         
         elif self.state == "markState":
             self.setDown(False)
-            if e.button() == Qt.RightButton and self.acceptQuestionMark and not self.leftRight:
-                self.setQuestionState()
+            if e.button() == Qt.RightButton and not self.leftRight:
+                if self.acceptQuestionMark: 
+                    self.setQuestionState()
+                else:
+                    self.setBlankState()
                 self.cancelMineMarked.emit()
             elif e.buttons() == Qt.NoButton and self.leftRight:
                 self.leftRight = False
