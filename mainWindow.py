@@ -11,6 +11,7 @@ from baseWindow import baseWindow
 from mineGrid import mineGrid
 from libms import mineSweeper
 from settingDialog import settingDialog
+from fetchData import fetchData
 import sys
 
 
@@ -21,8 +22,13 @@ class mainWindow(baseWindow):
         self.setWindowTitle("mine sweeper")
         self.setWindowIcon(QIcon("sources/mine.png"))
         
-        self.mode = "Easy"
-        self.modeDict = {"Easy": (9, 9, 10), "Medium": (16, 16, 40), "Difficult": (16, 30, 99), "Custom": (20, 50, 200)}
+        self.data = fetchData()
+        self.data.getAllData()
+        
+        
+        self.mode = self.data.lastMode
+        self.modeDict = {"Easy": (9, 9, 10), "Medium": (16, 16, 40), "Difficult": (16, 30, 99)}
+        self.modeDict["Custom"] = self.data.customSize
         self.row, self.column, self.mines = self.modeDict[self.mode]
         eval("self.{}Action.setChecked(True)".format(self.mode.lower()))
         self.myTimer = QTimer()
