@@ -37,6 +37,14 @@ class mineGrid(QPushButton):
     
     def setValue(self, v):
         self.value = v
+    
+    def setGridSize(self, s):
+        self.setFixedSize(QSize(s, s))
+        
+    def setNumberSize(self, n):
+        font = self.font()
+        font.setPointSize(n)
+        self.setFont(font)
         
     # under blankState, accept left click (check the blank) and right click (change to markState), ignore mid click
     def setBlankState(self):

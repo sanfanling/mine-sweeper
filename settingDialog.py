@@ -25,22 +25,18 @@ class settingDialog(QDialog):
         
         self.generalBox = generalBox()
         self.interfaceBox = interfaceBox()
+        self.customBox = customBox()
         
         mainLayout = QVBoxLayout(None)
         mainLayout.addWidget(self.generalBox)
         mainLayout.addWidget(self.interfaceBox)
+        mainLayout.addWidget(self.customBox)
         mainLayout.addWidget(buttonBox)
         
         self.setLayout(mainLayout)
-        
-        
+                
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
-
-
-
-
-
 
 
 class generalBox(QGroupBox):
@@ -61,7 +57,6 @@ class generalBox(QGroupBox):
         self.setLayout(mainLayout)
 
 
-
 class interfaceBox(QGroupBox):
     
     def __init__(self):
@@ -70,17 +65,43 @@ class interfaceBox(QGroupBox):
         self.setAlignment(Qt.AlignHCenter)
         
         mainLayout = QGridLayout(None)
-        self.gridSizeLabel = QLabel("Set the grid size: ", self)
+        self.gridSizeLabel = QLabel("Set the grid size:", self)
         mainLayout.addWidget(self.gridSizeLabel, 0, 0)
-        self.gridSizeSpin = QSpinBox(self)
-        mainLayout.addWidget(self.gridSizeSpin, 0, 1)
+        self.gridSize = QSpinBox(self)
+        self.gridSize.setMinimum(24) # very interesting, to MAMBA
+        mainLayout.addWidget(self.gridSize, 0, 1)
         self.numberSizeLabel = QLabel("Set the number size:", self)
         mainLayout.addWidget(self.numberSizeLabel, 1, 0)
-        self.numberSizeSpin = QSpinBox(self)
-        mainLayout.addWidget(self.numberSizeSpin, 1, 1)
+        self.numberSize = QSpinBox(self)
+        self.numberSize.setMinimum(8) # very interesting, to MAMBA
+        mainLayout.addWidget(self.numberSize, 1, 1)
         self.setLayout(mainLayout)
         
+
+class customBox(QGroupBox):
+    
+    def __init__(self):
+        super().__init__()
+        self.setTitle("Custom mode")
+        self.setAlignment(Qt.AlignHCenter)
         
+        mainLayout = QGridLayout(None)
+        self.customHeightLabel = QLabel("Set custom height:", self)
+        mainLayout.addWidget(self.customHeightLabel, 0, 0)
+        self.customHeight = QSpinBox(self)
+        self.customHeight.setMinimum(2)
+        mainLayout.addWidget(self.customHeight, 0, 1)
+        self.customWidthLabel = QLabel("Set custom width:", self)
+        mainLayout.addWidget(self.customWidthLabel, 1, 0)
+        self.customWidth = QSpinBox(self)
+        self.customWidth.setMinimum(2)
+        mainLayout.addWidget(self.customWidth, 1, 1)
+        self.customMinesLabel = QLabel("Set custom mines:", self)
+        mainLayout.addWidget(self.customMinesLabel, 2, 0)
+        self.customMines = QSpinBox(self)
+        self.customMines.setMinimum(1)
+        mainLayout.addWidget(self.customMines, 2, 1)
+        self.setLayout(mainLayout)
         
 
 

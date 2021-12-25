@@ -33,7 +33,7 @@ class mainWindow(baseWindow):
         eval("self.{}Action.setChecked(True)".format(self.mode.lower()))
         self.myTimer = QTimer()
         self.timeUsage = 0
-        self.originalGridPal = mineGrid.palette(self)
+        self.originalGridPal = self.palette()
         
         self.virtualNewWorld()
 
@@ -56,6 +56,8 @@ class mainWindow(baseWindow):
         for i in range(self.row):
             for j in range(self.column):
                 m = mineGrid(i, j)
+                m.setGridSize(self.data.gridSize)
+                m.setNumberSize(self.data.numberSize)
                 self.gridLayout.addWidget(m, i, j)
                 m.touchPress.connect(self.touchPress_)
                 m.touchRelease.connect(self.touchRelease_)
@@ -262,10 +264,37 @@ class mainWindow(baseWindow):
     
     def settingAction_(self):
         dialog = settingDialog()
+        logicalDict1 = {True: 2, False: 0}
+        dialog.generalBox.questionMark.setCheckState(logicalDict1[self.data.questionMark])
+        dialog.generalBox.autoStart.setCheckState(logicalDict1[self.data.autoStart])
+        dialog.generalBox.sound.setCheckState(logicalDict1[self.data.sound])
+        dialog.interfaceBox.gridSize.setValue(self.data.gridSize)
+        dialog.interfaceBox.numberSize.setValue(self.data.numberSize)
+        h, w, m = self.data.customSize
+        dialog.customBox.customHeight.setValue(h)
+        dialog.customBox.customWidth.setValue(w)
+        dialog.customBox.customMines.setValue(m)
         if dialog.exec_() == QDialog.Accepted:
-            pass
-        else:
-            pass
+            logicalDict2 = {2: True, 0: False}
+            self.data.questionMark = logicalDict2[dialog.generalBox.questionMark.checkState()]
+            self.data.autoStart = logicalDict2[dialog.generalBox.autoStart.checkState()]
+            self.data.sound = logicalDict2[dialog.generalBox.sound.checkState()]
+            self.data.gridSize = dialog.interfaceBox.gridSize.value()
+            self.data.numberSize = dialog.interfaceBox.numberSize.value()
+            self.data.customSize = (dialog.customBox.customHeight.value(), dialog.customBox.customWidth.value(), dialog.customBox.customMines.value())
+            
+            # proceed questionMark
+            # proceed autoStart
+            # proceed sound
+            # procedd grid size
+            # proceed number size
+            for i in range(self.row):
+                for j in range(self.column):
+                    self.gridLayout.itemAtPosition(i, j).widget().setNumberSize(self.data.numberSize)
+                    self.gridLayout.itemAtPosition(i, j).widget().setGridSize(self.data.gridSize)
+            self.adjustSize()
+            
+            self.modeDict["Custom"] = self.data.customSize
     
     def aboutQtAction_(self):
         QMessageBox.aboutQt(self, "About Qt")

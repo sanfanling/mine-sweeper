@@ -73,7 +73,7 @@ class fetchData:
         autoStart = False
         sound = False
         gridSize = 25
-        numberSize = 0
+        numberSize = 10
         lastMode = Easy
         straightWin = 0
         straightLose = 0
