@@ -25,6 +25,8 @@ class mainWindow(baseWindow):
         self.setWindowTitle("mine sweeper")
         self.setWindowIcon(QIcon("sources/mine.png"))
         self.setSizePolicy(QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored))
+        self.resizeTimer = QTimer()
+        self.resizeTimer.setSingleShot(True)
         
         self.data = handleData()
         self.data.getAllData()
@@ -46,14 +48,13 @@ class mainWindow(baseWindow):
         self.newAction.triggered.connect(self.virtualNewGame)
         self.newGameButton.clicked.connect(self.virtualNewGame)
         self.replayAction.triggered.connect(self.virtualReplay)
-        self.aboutGameAction.triggered.connect(self.aboutGameAction_)
-        self.aboutQtAction.triggered.connect(self.aboutQtAction_)
         self.quitAction.triggered.connect(self.close)
         self.easyAction.triggered.connect(self.changeMode_)
         self.mediumAction.triggered.connect(self.changeMode_)
         self.difficultAction.triggered.connect(self.changeMode_)
         self.customAction.triggered.connect(self.changeMode_)
         self.settingAction.triggered.connect(self.settingAction_)
+        self.resizeTimer.timeout.connect(self.adjustSize)
     
     def initBoard(self):
         self.gridLayout = QGridLayout(None)
@@ -96,6 +97,7 @@ class mainWindow(baseWindow):
         
         self.setCentralWidget(wid)
         #self.adjustSize()
+        self.resizeTimer.start(100)
         w = int(QApplication.desktop().availableGeometry(self).width() / 2 - self.width())
         self.move(w, 200)
     
@@ -344,13 +346,8 @@ class mainWindow(baseWindow):
                     self.gridLayout.itemAtPosition(i, j).widget().setGridSize(self.data.gridSize)
             
             self.modeDict["Custom"] = self.data.customSize
-            self.adjustSize()
-    
-    def aboutQtAction_(self):
-        QMessageBox.aboutQt(self, "About Qt")
-    
-    def aboutGameAction_(self):
-        QMessageBox.about(self, "About mine sweeper", "It is a PyQt5 version of classic windows mine sweeper game. The final purpose of this application is no difference between clone version and windows classic version.\n\nAuthor: sanfanling (xujia19@outlook.con)")
+            self.resizeTimer.start(100)
+
     
     def closeEvent(self, e):
         self.data.updateLastMode(self.mode)

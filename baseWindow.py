@@ -17,6 +17,8 @@ class baseWindow(QMainWindow):
         self.initMenubar()
         self.initPanelWidget()
         
+        self.aboutGameAction.triggered.connect(self.aboutGameAction_)
+        self.aboutQtAction.triggered.connect(self.aboutQtAction_)
 
     def initMenubar(self):
         gameMenu = self.menuBar().addMenu("Game")
@@ -66,3 +68,9 @@ class baseWindow(QMainWindow):
         self.newGameButton = QPushButton("New", self)
         #self.replayButton = QPushButton("Re-play", self)
         self.timeUsageLcd = QLCDNumber(self)
+    
+    def aboutQtAction_(self):
+        QMessageBox.aboutQt(self, "About Qt")
+    
+    def aboutGameAction_(self):
+        QMessageBox.about(self, "About mine sweeper", "It is a PyQt5 version of classic windows mine sweeper game. The final purpose of this application is no difference between clone version and windows classic version.\n\nAuthor: sanfanling (xujia19@outlook.con)")
