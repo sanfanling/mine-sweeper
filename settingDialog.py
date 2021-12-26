@@ -50,7 +50,7 @@ class generalBox(QGroupBox):
         self.autoStart = QCheckBox("Auto start at first", self)
         self.autoStart.setEnabled(False)
         self.sound = QCheckBox("Enable sound effect", self)
-        self.sound.setEnabled(False)
+        #self.sound.setEnabled(False)
         
         mainLayout = QVBoxLayout(None)
         mainLayout.addWidget(self.questionMark)

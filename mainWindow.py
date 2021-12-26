@@ -7,6 +7,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtMultimedia import QSoundEffect
 from baseWindow import baseWindow
 from mineGrid import mineGrid
 from libms import mineSweeper
@@ -38,6 +39,7 @@ class mainWindow(baseWindow):
         self.row, self.column, self.mines = self.modeDict[self.mode]
         eval("self.{}Action.setChecked(True)".format(self.mode.lower()))
         self.myTimer = QTimer()
+        self.soundEffect = QSoundEffect(self)
         self.timeUsage = 0
         self.originalGridPal = self.palette()
         
@@ -238,6 +240,9 @@ class mainWindow(baseWindow):
         self.operateGridTogether("setMineState()", t2)
         self.myTimer.stop()
         print("Fail!")
+        if self.data.sound:
+            self.soundEffect.setSource(QUrl.fromLocalFile("sources/bomb.wav"))
+            self.soundEffect.play()
         
         for i in range(0, self.row):
             for j in range(0, self.column):
@@ -266,6 +271,10 @@ class mainWindow(baseWindow):
             self.minesLeftLcd.display(0)
             self.myTimer.stop()
             print("Win! time: {} seconds".format(self.timeUsage))
+            if self.data.sound:
+                self.soundEffect.setSource(QUrl.fromLocalFile("sources/win.wav"))
+                self.soundEffect.play()
+            
             for i in range(0, self.row):
                 for j in range(0, self.column):
                     self.gridLayout.itemAtPosition(i, j).widget().setDisableState()
