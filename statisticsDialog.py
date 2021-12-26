@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#File name: statistics.py
+#File name: statisticsDialog.py
 #Author: sanfanling
 #licence: GPL-V3 
 
@@ -11,20 +11,21 @@ import sys
 
 
 
-class statistics(QDialog):
+class statisticsDialog(QDialog):
     
-    def __init__(self):
+    def __init__(self, easyRankList = [], easy_totalGame = 0, easy_winGame = 0, mediumRankList = [], medium_totalGame = 0, medium_winGame = 0, difficultRankList = [], difficult_totalGame = 0, difficult_winGame = 0):
         super().__init__()
         self.setWindowTitle("Statistics")
         self.setWindowIcon(QIcon("sources/mine.png"))
+        self.setMinimumWidth(350)
         
         self.chooseItem = QComboBox()
         self.chooseItem.addItems(["Easy mode", "Medium mode", "Difficult mode"])
         
         self.stackedWidget = QStackedWidget()
-        self.easyPage = basePage("easy mode")
-        self.mediumPage = basePage("medium mode")
-        self.difficultPage = basePage("difficult mode")
+        self.easyPage = basePage("easy mode", easyRankList, easy_totalGame, easy_winGame)
+        self.mediumPage = basePage("medium mode", mediumRankList, medium_totalGame, medium_winGame)
+        self.difficultPage = basePage("difficult mode", difficultRankList, difficult_totalGame, difficult_winGame)
         self.stackedWidget.addWidget(self.easyPage)
         self.stackedWidget.addWidget(self.mediumPage)
         self.stackedWidget.addWidget(self.difficultPage)
@@ -55,18 +56,18 @@ class statistics(QDialog):
 
 class basePage(QWidget):
     
-    def __init__(self, mode):
+    def __init__(self, mode, rankList, totalGame, winGame):
         super().__init__()
         mainLayout = QVBoxLayout(None)
-        mainLayout.addWidget(baseBestBox(mode))
-        mainLayout.addWidget(baseOverallBox(mode))
+        mainLayout.addWidget(baseBestBox(mode, rankList))
+        mainLayout.addWidget(baseOverallBox(mode, totalGame, winGame))
         self.setLayout(mainLayout)
         
     
     
 class baseBestBox(QGroupBox):
     
-    def __init__(self, mode):
+    def __init__(self, mode, rankList):
         super().__init__()
         self.setTitle("Best of {}".format(mode))
         self.setAlignment(Qt.AlignHCenter)
@@ -75,17 +76,28 @@ class baseBestBox(QGroupBox):
         self.gridLayout.addWidget(QLabel("Time", self), 0, 1)
         self.gridLayout.addWidget(QLabel("User", self), 0, 2)
         self.gridLayout.addWidget(QLabel("Date", self), 0, 3)
+        
         for i in range(1, 11):
             for j in range(4):
-                w = QLabel(self)
+                if j == 0:
+                    w = QLabel(str(i), self)
+                else:
+                    w = QLabel(self)
                 self.gridLayout.addWidget(w, i, j)
         self.setLayout(self.gridLayout)
+        
+        rank = 0
+        for item in rankList:
+            rank += 1
+            self.gridLayout.itemAtPosition(rank, 1).widget().setText(str(item[0]))
+            self.gridLayout.itemAtPosition(rank, 2).widget().setText(item[1])
+            self.gridLayout.itemAtPosition(rank, 3).widget().setText(item[2])
         
 
 
 class baseOverallBox(QGroupBox):
     
-    def __init__(self, mode):
+    def __init__(self, mode, totalGame, winGame):
         super().__init__()
         self.setTitle("Overall of {}".format(mode))
         self.setAlignment(Qt.AlignHCenter)
@@ -93,16 +105,19 @@ class baseOverallBox(QGroupBox):
         self.gridLayout.addWidget(QLabel("Games:", self), 0, 0)
         self.gridLayout.addWidget(QLabel("Wins:", self), 1, 0)
         self.gridLayout.addWidget(QLabel("Percentage:", self), 2, 0)
-        self.gridLayout.addWidget(QLabel(""), 0, 1)
-        self.gridLayout.addWidget(QLabel(""), 1, 1)
-        self.gridLayout.addWidget(QLabel(""), 2, 1)
+        self.gridLayout.addWidget(QLabel(str(totalGame), self), 0, 1)
+        self.gridLayout.addWidget(QLabel(str(winGame), self), 1, 1)
+        if totalGame == 0:
+            self.gridLayout.addWidget(QLabel("Null", self), 2, 1)
+        else:
+            self.gridLayout.addWidget(QLabel("{}%".format(round(winGame / totalGame * 100, 2)), self), 2, 1)
         self.setLayout(self.gridLayout)
 
 
 
 def main():
     app = QApplication(sys.argv)
-    w = statistics()
+    w = statisticsDialog()
     w.show()
     sys.exit(app.exec_()) 
 

@@ -12,6 +12,7 @@ from mineGrid import mineGrid
 from libms import mineSweeper
 from settingDialog import settingDialog
 from handleData import handleData
+from statisticsDialog import statisticsDialog
 import getpass
 import time
 import sys
@@ -126,6 +127,7 @@ class mainWindow(baseWindow):
         self.initExtra()
     
     def initExtra(self):
+        self.data.updateTotalGame(self.mode)
         self.markedMinesMap = []
         self.timeUsage = 0
         self.minesLeftLcd.display(self.mines)
@@ -266,7 +268,10 @@ class mainWindow(baseWindow):
                 for j in range(0, self.column):
                     self.gridLayout.itemAtPosition(i, j).widget().setDisableState()
             
+            
+            
             if self.mode != "Custom":
+                self.data.updateWinGame(self.mode)
                 add, ind = self.data.compareToBest(self.timeUsage, self.mode)
                 if add:
                     # ask user name
@@ -276,7 +281,14 @@ class mainWindow(baseWindow):
                     
                     
     def statisticsAction_(self):
-        pass
+        dialog = statisticsDialog(self.data.easyRankList, self.data.easy_totalGame, self.data.easy_winGame, self.data.mediumRankList, self.data.medium_totalGame, self.data.medium_winGame, self.data.difficultRankList, self.data.difficult_totalGame, self.data.difficult_winGame)
+        index = {"Easy": 0, "Medium": 1, "Difficult": 2}[self.mode]
+        dialog.chooseItem.setCurrentIndex(index)
+        dialog.stackedWidget.setCurrentIndex(index)
+        if dialog.exec_() == QDialog.Accepted:
+            pass
+        else:
+            pass
             
             
     
@@ -330,6 +342,7 @@ class mainWindow(baseWindow):
         QMessageBox.about(self, "About mine sweeper", "It is a PyQt5 version of classic windows mine sweeper game. The final purpose of this application is no difference between clone version and windows classic version.\n\nAuthor: sanfanling (xujia19@outlook.con)")
     
     def closeEvent(self, e):
+        self.data.updateLastMode(self.mode)
         self.data.setAllData()
         self.data.writeToFile()
         e.accept()

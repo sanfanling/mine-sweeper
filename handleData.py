@@ -30,8 +30,11 @@ class handleData:
         self.straightLose = self.cf. getint("general", "straightLose")
         self.currentStraight = self.cf. getint("general", "currentStraight")
         self.easy_totalGame = self.cf.getint("easyMode", "totalGame")
+        self.easy_winGame = self.cf.getint("easyMode", "winGame")
         self.medium_totalGame = self.cf.getint("mediumMode", "totalGame")
+        self.medium_winGame = self.cf.getint("mediumMode", "winGame")
         self.difficult_totalGame = self.cf.getint("difficultMode", "totalGame")
+        self.difficult_winGame = self.cf.getint("difficultMode", "winGame")
         self.__toAppType()
         #print(self.easyRankList, self.mediumRankList, self.difficultRankList)
     
@@ -89,8 +92,11 @@ class handleData:
         self.cf.set("general", "straightLose", str(self.straightLose))
         self.cf.set("general", "currentStraight", str(self.currentStraight))
         self.cf.set("easyMode", "totalGame", str(self.easy_totalGame))
+        self.cf.set("easyMode", "winGame", str(self.easy_winGame))
         self.cf.set("mediumMode", "totalGame", str(self.medium_totalGame))
+        self.cf.set("mediumMode", "winGame", str(self.medium_winGame))
         self.cf.set("difficultMode", "totalGame", str(self.difficult_totalGame))
+        self.cf.set("difficultMode", "winGame", str(self.difficult_winGame))
         for p in range(1, 11):
             self.cf.set("easyMode", str(p), self.easyRankList[p - 1])
             self.cf.set("mediumMode", str(p), self.mediumRankList[p -1])
@@ -98,6 +104,7 @@ class handleData:
     
     def __toStrTpye(self):
         self.customSize = ",".join(map(str, self.customSize))
+        
         
         tmpEasyList = []
         for i in self.easyRankList:
@@ -151,7 +158,26 @@ class handleData:
             self.difficultRankList.insert(index, record)
             if len(self.difficultRankList) > 10:
                 self.difficultRankList = self.difficultRankList[:10]
-            
+    
+    def updateTotalGame(self, mode):
+        if mode == "Easy":
+            self.easy_totalGame += 1
+        elif mode == "Medium":
+            self.medium_totalGame += 1
+        else:
+            self.difficult_totalGame += 1
+        
+    
+    def updateWinGame(self, mode):
+        if mode == "Easy":
+            self.easy_winGame += 1
+        elif mode == "Medium":
+            self.medium_winGame += 1
+        else:
+            self.difficult_winGame += 1
+    
+    def updateLastMode(self, mode):
+        self.lastMode = mode
             
     
     def writeToFile(self):
