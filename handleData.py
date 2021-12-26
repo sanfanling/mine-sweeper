@@ -10,7 +10,7 @@ import os.path
 
 
 
-class fetchData:
+class handleData:
     
     def __init__(self):
         self.fileName = os.path.expanduser("~/.minesweeper.conf")

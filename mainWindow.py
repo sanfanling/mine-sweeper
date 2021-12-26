@@ -11,7 +11,7 @@ from baseWindow import baseWindow
 from mineGrid import mineGrid
 from libms import mineSweeper
 from settingDialog import settingDialog
-from fetchData import fetchData
+from handleData import handleData
 import time
 import sys
 
@@ -24,7 +24,7 @@ class mainWindow(baseWindow):
         self.setWindowIcon(QIcon("sources/mine.png"))
         self.setSizePolicy(QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored))
         
-        self.data = fetchData()
+        self.data = handleData()
         self.data.getAllData()
         
         
