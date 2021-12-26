@@ -116,6 +116,42 @@ class handleData:
             item = (", ").join([str(x) for x in i])
             tmpDifficultList.append(item)
         self.difficultRankList = tmpDifficultList + [""] * (10 - len(tmpDifficultList))
+    
+    def compareToBest(self, timeUsage, mode):
+        if mode == "Easy":
+            compareList = self.easyRankList
+        elif mode == "Medium":
+            compareList = self.mediumRankList
+        else:
+            compareList = self.difficultRankList
+        index = 0
+        add = False
+        for i in compareList:
+            if timeUsage < i[0]:
+                #compareList.insert(index, timeUsage)
+                add = True
+                return add, index
+            else:
+                index += 1
+        if not add and len(compareList) < 10:
+            return True, index + 1
+        else:
+            return False, -1
+    
+    def updateBest(self, record, index, mode):
+        if mode == "Easy":
+            self.easyRankList.insert(index, record)
+            if len(self.easyRankList) > 10:
+                self.easyRankList = self.easyRankList[:10]
+        elif mode == "Medium":
+            self.mediumRankList.insert(index, record)
+            if len(self.mediumRankList) > 10:
+                self.mediumRankList = self.mediumRankList[:10]
+        else:
+            self.difficultRankList.insert(index, record)
+            if len(self.difficultRankList) > 10:
+                self.difficultRankList = self.difficultRankList[:10]
+            
             
     
     def writeToFile(self):
