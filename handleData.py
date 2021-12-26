@@ -141,7 +141,7 @@ class handleData:
             else:
                 index += 1
         if not add and len(compareList) < 10:
-            return True, index + 1
+            return True, index
         else:
             return False, -1
     
@@ -158,6 +158,17 @@ class handleData:
             self.difficultRankList.insert(index, record)
             if len(self.difficultRankList) > 10:
                 self.difficultRankList = self.difficultRankList[:10]
+    
+    def resetRecords(self):
+        self.easyRankList = []
+        self.mediumRankList = []
+        self.difficultRankList = []
+        self.easy_totalGame = 0
+        self.easy_winGame = 0
+        self.medium_totalGame = 0
+        self.medium_winGame = 0
+        self.difficult_totalGame = 0
+        self.difficult_winGame = 0
     
     def updateTotalGame(self, mode):
         if mode == "Easy":

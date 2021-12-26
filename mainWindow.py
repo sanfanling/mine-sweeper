@@ -280,7 +280,6 @@ class mainWindow(baseWindow):
                     user, ok = QInputDialog.getText(self, "Input player name", "Player name:", 0, getpass.getuser())
                     record = (self.timeUsage, user, time.strftime("%Y-%m-%d"))
                     self.data.updateBest(record, ind, self.mode)
-                    
                     if self.mode == "Easy":
                         r = self.data.easyRankList
                     elif self.mode == "Medium":
@@ -292,19 +291,15 @@ class mainWindow(baseWindow):
                     bestDialog.exec_()
                     
                     
-                    
     def statisticsAction_(self):
         dialog = statisticsDialog(self.data.easyRankList, self.data.easy_totalGame, self.data.easy_winGame, self.data.mediumRankList, self.data.medium_totalGame, self.data.medium_winGame, self.data.difficultRankList, self.data.difficult_totalGame, self.data.difficult_winGame)
-        index = {"Easy": 0, "Medium": 1, "Difficult": 2}[self.mode]
+        index = {"Easy": 0, "Medium": 1, "Difficult": 2, "Custom": 0}[self.mode]
         dialog.chooseItem.setCurrentIndex(index)
         dialog.stackedWidget.setCurrentIndex(index)
-        if dialog.exec_() == QDialog.Accepted:
-            pass
-        else:
-            pass
+        dialog.dataReset.connect(self.data.resetRecords)
+        dialog.exec_()
             
-            
-    
+
     def settingAction_(self):
         dialog = settingDialog()
         logicalDict1 = {True: 2, False: 0}

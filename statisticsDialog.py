@@ -42,6 +42,8 @@ class displayBestDialog(QDialog):
 
 class statisticsDialog(QDialog):
     
+    dataReset = pyqtSignal()
+    
     def __init__(self, easyRankList = [], easy_totalGame = 0, easy_winGame = 0, mediumRankList = [], medium_totalGame = 0, medium_winGame = 0, difficultRankList = [], difficult_totalGame = 0, difficult_winGame = 0):
         super().__init__()
         self.setWindowTitle("Statistics")
@@ -77,7 +79,12 @@ class statisticsDialog(QDialog):
         self.resetButton.clicked.connect(self.reset)
     
     def reset(self):
-        pass
+        re = QMessageBox.warning(self, "mine sweeper", "All the best records & statistics would be RESET\nAre you sure?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+        if re == 16384:
+            self.easyPage.reset()
+            self.mediumPage.reset()
+            self.difficultPage.reset()
+            self.dataReset.emit()
     
     def changePage(self, index):
         self.stackedWidget.setCurrentIndex(index)
@@ -88,9 +95,15 @@ class basePage(QWidget):
     def __init__(self, mode, rankList, totalGame, winGame):
         super().__init__()
         mainLayout = QVBoxLayout(None)
-        mainLayout.addWidget(baseBestBox(mode, rankList))
-        mainLayout.addWidget(baseOverallBox(mode, totalGame, winGame))
+        self.bestBox = baseBestBox(mode, rankList)
+        self.overAllBox = baseOverallBox(mode, totalGame, winGame)
+        mainLayout.addWidget(self.bestBox)
+        mainLayout.addWidget(self.overAllBox)
         self.setLayout(mainLayout)
+    
+    def reset(self):
+        self.bestBox.reset()
+        self.overAllBox.reset()
         
     
     
@@ -121,6 +134,12 @@ class baseBestBox(QGroupBox):
             self.gridLayout.itemAtPosition(rank, 1).widget().setText(str(item[0]))
             self.gridLayout.itemAtPosition(rank, 2).widget().setText(item[1])
             self.gridLayout.itemAtPosition(rank, 3).widget().setText(item[2])
+    
+    def reset(self):
+        for i in range(1, 11):
+            self.gridLayout.itemAtPosition(i, 1).widget().setText("")
+            self.gridLayout.itemAtPosition(i, 2).widget().setText("")
+            self.gridLayout.itemAtPosition(i, 3).widget().setText("")
         
 
 
@@ -141,6 +160,11 @@ class baseOverallBox(QGroupBox):
         else:
             self.gridLayout.addWidget(QLabel("{}%".format(round(winGame / totalGame * 100, 2)), self), 2, 1)
         self.setLayout(self.gridLayout)
+    
+    def reset(self):
+        self.gridLayout.itemAtPosition(0, 1).widget().setText("0")
+        self.gridLayout.itemAtPosition(1, 1).widget().setText("0")
+        self.gridLayout.itemAtPosition(2, 1).widget().setText("Null")
 
 
 
