@@ -9,7 +9,36 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import sys
 
-
+class displayBestDialog(QDialog):
+    
+    def __init__(self, mode, rankList):
+        super().__init__()
+        self.setWindowTitle("Made a record!")
+        self.setWindowIcon(QIcon("sources/mine.png"))
+        self.setMinimumWidth(350)
+        
+        self.display = baseBestBox(mode, rankList)
+        
+        self.buttonBox = QDialogButtonBox(self)
+        self.okButton = QPushButton("OK")
+        self.buttonBox.addButton(self.okButton, QDialogButtonBox.AcceptRole)
+        
+        mainLayout = QVBoxLayout(None)
+        mainLayout.addWidget(self.display)
+        mainLayout.addWidget(self.buttonBox)
+        
+        self.setLayout(mainLayout)
+        
+        self.buttonBox.accepted.connect(self.accept)
+    
+    def highLightCurrentRecord(self, ind):
+        font = self.display.gridLayout.itemAtPosition(ind + 1, 0).widget().font()
+        font.setItalic(True)
+        font.setBold(True)
+        for i in range(4):
+            self.display.gridLayout.itemAtPosition(ind + 1, i).widget().setFont(font)
+        
+        
 
 class statisticsDialog(QDialog):
     

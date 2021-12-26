@@ -12,7 +12,7 @@ from mineGrid import mineGrid
 from libms import mineSweeper
 from settingDialog import settingDialog
 from handleData import handleData
-from statisticsDialog import statisticsDialog
+from statisticsDialog import statisticsDialog, displayBestDialog
 import getpass
 import time
 import sys
@@ -278,6 +278,17 @@ class mainWindow(baseWindow):
                     user, ok = QInputDialog.getText(self, "Input player name", "Player name:", 0, getpass.getuser())
                     record = (self.timeUsage, user, time.strftime("%Y-%m-%d"))
                     self.data.updateBest(record, ind, self.mode)
+                    
+                    if self.mode == "Easy":
+                        r = self.data.easyRankList
+                    elif self.mode == "Medium":
+                        r = self.data.mediumRankList
+                    else:
+                        r = self.data.difficultRankList
+                    bestDialog = displayBestDialog(self.mode, r)
+                    bestDialog.highLightCurrentRecord(ind)
+                    bestDialog.exec_()
+                    
                     
                     
     def statisticsAction_(self):
