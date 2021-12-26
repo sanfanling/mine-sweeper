@@ -260,6 +260,7 @@ class mainWindow(baseWindow):
             self.minesLeftLcd.display(0)
             self.myTimer.stop()
             print("Win! time: {} seconds".format(self.timeUsage))
+            #self.data.easyRankList.append((self.timeUsage, "frank", time.strftime("%Y-%m-%d")))
             
             for i in range(0, self.row):
                 for j in range(0, self.column):
@@ -315,5 +316,7 @@ class mainWindow(baseWindow):
         QMessageBox.about(self, "About mine sweeper", "It is a PyQt5 version of classic windows mine sweeper game. The final purpose of this application is no difference between clone version and windows classic version.\n\nAuthor: sanfanling (xujia19@outlook.con)")
     
     def closeEvent(self, e):
+        #self.data.setAllData()
+        #self.data.writeToFile()
         e.accept()
  

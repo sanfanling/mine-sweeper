@@ -29,13 +29,53 @@ class fetchData:
         self.straightWin = self.cf.getint("general", "straightWin")
         self.straightLose = self.cf. getint("general", "straightLose")
         self.currentStraight = self.cf. getint("general", "currentStraight")
-        self.customSize = self.cf.get("custom", "size")
-        for x in ("easy", "medium", "difficult"):
-            exec("self.{}_totalGame = self.cf.getint('{}Mode', 'totalGame')".format(x, x))
-            exec("self.{}_totalGame = self.cf.getint('{}Mode', 'winGame')".format(x, x))
-            for y in range(1, 11):
-                exec("self.{}_{} = self.cf.get('{}Mode', '{}')".format(x, y, x, y))
-        self.__toPythonType()
+        self.easy_totalGame = self.cf.getint("easyMode", "totalGame")
+        self.medium_totalGame = self.cf.getint("mediumMode", "totalGame")
+        self.difficult_totalGame = self.cf.getint("difficultMode", "totalGame")
+        self.__toAppType()
+        #print(self.easyRankList, self.mediumRankList, self.difficultRankList)
+    
+    def __toAppType(self):
+        self.customSize = tuple(int(x) for x in self.cf.get("custom", "size").split(","))
+        easyList = []
+        mediumList = []
+        difficultList = []
+        
+        for i in range(1, 11):
+            item1 = self.cf.get("easyMode", str(i)).strip()
+            if item1 != "":
+                easyList.append(item1)
+                
+            item2 = self.cf.get("mediumMode", str(i)).strip()
+            if item2 != "":
+                mediumList.append(item2)
+                
+            item3 = self.cf.get("difficultMode", str(i)).strip()
+            if item3 != "":
+                difficultList.append(item3)
+        
+        self.easyRankList = []
+        self.mediumRankList = []
+        self.difficultRankList = []
+        for alpha in easyList:
+            t= alpha.split(",")
+            m1 = int(t[0])
+            m2 = t[1].strip()
+            m3 = t[2].strip()
+            self.easyRankList.append((m1, m2, m3))
+        for beta in mediumList:
+            t = beta.split(",")
+            m1 = int(t[0])
+            m2 = t[1].strip()
+            m3 = t[2].strip()
+            self.mediumRankList.append((m1, m2, m3))
+        for gama in difficultList:
+            t = gama.split(",")
+            m1 = int(t[0])
+            m2 = t[1].strip()
+            m3 = t[2].strip()
+            self.difficultRankList.append((m1, m2, m3))
+    
     
     def setAllData(self):
         self.__toStrTpye()
@@ -48,17 +88,35 @@ class fetchData:
         self.cf.set("general", "straightWin", str(self.straightWin))
         self.cf.set("general", "straightLose", str(self.straightLose))
         self.cf.set("general", "currentStraight", str(self.currentStraight))
-        for x in ("easy", "medium", "difficult"):
-            eval("self.cf.set('{}Mode', 'totalGame', self.{}_totalGame".format(x, x))
-            eval("self.cf.set('{}Mode', 'winGame', self.{}_totalGame".format(x, x))
-            for y in range(1, 11):
-                eval("self.cf.set('{}Mode', '{}', self.{}_{}".format(x, y, x, y))
-    
-    def __toPythonType(self):
-        self.customSize = tuple(int(x) for x in self.customSize.split(","))
+        self.cf.set("easyMode", "totalGame", str(self.easy_totalGame))
+        self.cf.set("mediumMode", "totalGame", str(self.medium_totalGame))
+        self.cf.set("difficultMode", "totalGame", str(self.difficult_totalGame))
+        for p in range(1, 11):
+            self.cf.set("easyMode", str(p), self.easyRankList[p - 1])
+            self.cf.set("mediumMode", str(p), self.mediumRankList[p -1])
+            self.cf.set("difficultMode", str(p), self.difficultRankList[p - 1])
     
     def __toStrTpye(self):
         self.customSize = ",".join(map(str, self.customSize))
+        
+        tmpEasyList = []
+        for i in self.easyRankList:
+            item = (", ").join([str(x) for x in i])
+            tmpEasyList.append(item)
+        self.easyRankList = tmpEasyList + [""] * (10 - len(tmpEasyList))
+        
+        tmpMediumList = []
+        for i in self.mediumRankList:
+            item = (", ").join([str(x) for x in i])
+            tmpMediumList.append(item)
+        self.mediumRankList = tmpMediumList + [""] * (10 - len(tmpMediumList))
+        
+        tmpDifficultList = []
+        for i in self.difficultRankList:
+            item = (", ").join([str(x) for x in i])
+            tmpDifficultList.append(item)
+        self.difficultRankList = tmpDifficultList + [""] * (10 - len(tmpDifficultList))
+            
     
     def writeToFile(self):
         with open(self.fileName, "w") as f:
