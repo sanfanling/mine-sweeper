@@ -103,6 +103,11 @@ class customBox(QGroupBox):
         self.customMines = QSpinBox(self)
         self.customMines.setMinimum(1)
         mainLayout.addWidget(self.customMines, 2, 1)
+        self.infoLabel = QLabel("Important: mines can't be more than height*width/2", self)
+        pal = self.infoLabel.palette()
+        pal.setColor(QPalette.WindowText, Qt.red)
+        self.infoLabel.setPalette(pal)
+        mainLayout.addWidget(self.infoLabel, 3, 0)
         self.setLayout(mainLayout)
         
 
