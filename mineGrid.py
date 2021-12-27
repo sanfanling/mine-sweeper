@@ -11,12 +11,12 @@ from PyQt5.QtGui import *
 
 class mineGrid(QPushButton):
     
-    touchPress = pyqtSignal()
-    touchRelease = pyqtSignal()
-    zeroTouched = pyqtSignal()
-    mineTouched = pyqtSignal()
-    mineMarked = pyqtSignal()
-    cancelMineMarked = pyqtSignal()
+    touchPress = pyqtSignal(int, int)
+    touchRelease = pyqtSignal(int, int)
+    zeroTouched = pyqtSignal(int, int)
+    mineTouched = pyqtSignal(int, int, bool)
+    mineMarked = pyqtSignal(int, int)
+    cancelMineMarked = pyqtSignal(int, int)
     numberMarked = pyqtSignal()
     
     def __init__(self, row, column, acceptQuestionMark = True, value = 0): # value理论上为0-8,0意味着周边没有雷，表象上应该是灰色不可按；如value == -1,定义为“雷”
@@ -113,12 +113,12 @@ class mineGrid(QPushButton):
     
     def mouseDoubleClickEvent(self, e):
         if e.button() == Qt.LeftButton:
-            self.touchRelease.emit()
+            self.touchRelease.emit(self.row, self.column)
         
     def mouseReleaseEvent(self, e):
         if not self.rect().contains(e.pos()):
             if self.state == 'numberState' and self.leftRight:
-                self.touchRelease.emit()
+                self.touchRelease.emit(self.row, self.column)
             else:
                 self.setDown(False)
                 self.leftRight = False
@@ -131,13 +131,13 @@ class mineGrid(QPushButton):
                     self.setNumberState()
                     self.numberMarked.emit()
                 elif self.value == 0:
-                    self.zeroTouched.emit()
+                    self.zeroTouched.emit(self.row, self.column)
                 elif self.value == -1:
                     self.setExplodeState()
-                    self.mineTouched.emit()
+                    self.mineTouched.emit(self.row, self.column, True)
             elif e.button() == Qt.RightButton and not self.leftRight:
                 self.setMarkState()
-                self.mineMarked.emit()
+                self.mineMarked.emit(self.row, self.column)
             elif e.buttons() == Qt.NoButton and self.leftRight:
                 self.leftRight = False
         
@@ -148,7 +148,7 @@ class mineGrid(QPushButton):
                     self.setQuestionState()
                 else:
                     self.setBlankState()
-                self.cancelMineMarked.emit()
+                self.cancelMineMarked.emit(self.row, self.column)
             elif e.buttons() == Qt.NoButton and self.leftRight:
                 self.leftRight = False
         
@@ -163,7 +163,7 @@ class mineGrid(QPushButton):
             if (e.button() == Qt.LeftButton and self.leftRight and e.buttons() == Qt.NoButton) or (e.button() == Qt.RightButton and self.leftRight and e.buttons() == Qt.NoButton) or e.button() == Qt.MidButton:
                 #print("左右键同时释放")
                 self.leftRight = False
-                self.touchRelease.emit()
+                self.touchRelease.emit(self.row, self.column)
         
     def mouseMoveEvent(self, e):
         self.setDown(False)
@@ -183,7 +183,7 @@ class mineGrid(QPushButton):
                 self.setDown(True)
                 self.leftRight = False
             if (e.buttons() == Qt.LeftButton | Qt.RightButton) or e.button() == Qt.MidButton:
-                print("左右键同时按下，但被屏蔽")
+                #print("左右键同时按下，但被屏蔽")
                 self.setDown(True)
                 self.leftRight = True
         
@@ -200,7 +200,7 @@ class mineGrid(QPushButton):
             if e.buttons() == (Qt.LeftButton | Qt.RightButton) or e.button() == Qt.MidButton:
                 #print("左右键同时按下，有效")
                 self.leftRight = True
-                self.touchPress.emit()
+                self.touchPress.emit(self.row, self.column)
     
     def sizeHint(self):
        return QSize(25, 25)

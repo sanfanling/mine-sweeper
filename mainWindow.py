@@ -108,6 +108,7 @@ class mainWindow(baseWindow):
         game.generate()
         self.sourcesMap = game.base
         self.minesMap = game.minesMap
+        self.zeroPoint = game.zeroPoint
         self.markedMinesMap = []
         #print(self.sourcesMap)
         for i in range(self.row):
@@ -137,6 +138,8 @@ class mainWindow(baseWindow):
         self.minesLeftLcd.display(self.mines)
         self.timeUsageLcd.display(0)
         self.myTimer.start(1000)
+        if self.data.autoStart and (self.mode == "Medium" or self.mode == "Difficult"):
+            self.zeroTouched_(*self.zeroPoint)
     
     def restoreGrids(self):
         for i in range(self.row):
@@ -175,8 +178,8 @@ class mainWindow(baseWindow):
                 wrongList.append((r, c))
         return wrongList
     
-    def zeroTouched_(self):
-        b, n = self.autoZeroState((self.sender().row, self.sender().column), [], [])
+    def zeroTouched_(self, row, column):
+        b, n = self.autoZeroState((row, column), [], [])
         self.operateGridTogether("setZeroState()", b)
         self.operateGridTogether("setNumberState()", n)
         self.checkWin()
@@ -200,17 +203,16 @@ class mainWindow(baseWindow):
         for r, c in tmpList:
             eval("self.gridLayout.itemAtPosition({}, {}).widget().{}".format(r, c, expression))
     
-    def touchRelease_(self):
-        minePoslist = self.getNearPos(self.sender().row, self.sender().column, "markState")  #邻居雷位置
-        blankAndQuestionPosList = self.getNearPos(self.sender().row, self.sender().column, "blankState questionState") #邻居空白+问号位置
+    def touchRelease_(self, row, column):
+        minePoslist = self.getNearPos(row, column, "markState")  #邻居雷位置
+        blankAndQuestionPosList = self.getNearPos(row, column, "blankState questionState") #邻居空白+问号位置
         
         mineNum = len(minePoslist)
-        if mineNum != self.sender().value:
-            self.operateGridTogether("setDown(False)", blankAndQuestionPosList)
-        else:
+        
+        self.operateGridTogether("setDown(False)", blankAndQuestionPosList)
+        if mineNum == self.sender().value:
             wrongMark = self.checkMark(minePoslist)
             if wrongMark == []:
-                self.operateGridTogether("setDown(False)", blankAndQuestionPosList)
                 z = []
                 for r1, c1 in blankAndQuestionPosList:
                     z.append(self.gridLayout.itemAtPosition(r1, c1).widget().value)
@@ -224,18 +226,17 @@ class mainWindow(baseWindow):
                     self.operateGridTogether("setNumberState()", numberList)
                 self.checkWin()
             else:
-                self.operateGridTogether("setDown(False)", blankAndQuestionPosList)
-                self.gameFailed(False)
+                self.gameFailed(row, column, False)
                 
     
-    def touchPress_(self):
-        self.operateGridTogether("setDown(True)", self.getNearPos(self.sender().row, self.sender().column, "blankState questionState"))
+    def touchPress_(self, row, column):
+        self.operateGridTogether("setDown(True)", self.getNearPos(row, column, "blankState questionState"))
     
-    def gameFailed(self, clickFailed = True):
+    def gameFailed(self, row, column, clickFailed = True):
         t1 = list(set(self.markedMinesMap) - set(self.minesMap))
         self.operateGridTogether("setMarkWrongState()", t1)
         if clickFailed:
-            self.markedMinesMap.append((self.sender().row, self.sender().column))
+            self.markedMinesMap.append((row, column))
         t2 = list(set(self.minesMap) - set(self.markedMinesMap))
         self.operateGridTogether("setMineState()", t2)
         self.myTimer.stop()
@@ -248,12 +249,12 @@ class mainWindow(baseWindow):
             for j in range(0, self.column):
                 self.gridLayout.itemAtPosition(i, j).widget().setDisableState()
     
-    def mineMarked_(self):
-        self.markedMinesMap.append((self.sender().row, self.sender().column))
+    def mineMarked_(self, row, column):
+        self.markedMinesMap.append((row, column))
         self.minesLeftLcd.display(self.mines - len(self.markedMinesMap))
     
-    def cancelMineMarked_(self):
-        self.markedMinesMap.remove((self.sender().row, self.sender().column))
+    def cancelMineMarked_(self, row, column):
+        self.markedMinesMap.remove((row, column))
         self.minesLeftLcd.display(self.mines - len(self.markedMinesMap))
     
     def timeDisplay(self):

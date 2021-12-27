@@ -47,8 +47,8 @@ class generalBox(QGroupBox):
         self.setAlignment(Qt.AlignHCenter)
         
         self.questionMark = QCheckBox("Enable \"?\" mark in the game", self)
-        self.autoStart = QCheckBox("Auto start at first", self)
-        self.autoStart.setEnabled(False)
+        self.autoStart = QCheckBox("Auto start at first(Media & Difficult only)", self)
+        #self.autoStart.setEnabled(False)
         self.sound = QCheckBox("Enable sound effect", self)
         #self.sound.setEnabled(False)
         
