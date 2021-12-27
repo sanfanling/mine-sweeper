@@ -55,7 +55,7 @@ class mineSweeper:
                     zeroMap.append((i, j))
         direction = [(-1, 0), (0, 1), (1, 0), (0, -1)]
         for point in zeroMap:
-            tmpList = list(map(lambda x: (x[0] + point[0], x[1] + point[1]), zeroMap))
+            tmpList = list(map(lambda x: (x[0] + point[0], x[1] + point[1]), direction))
             if set(tmpList).issubset(set(zeroMap)):
                 self.zeroPoint = point
                 return
