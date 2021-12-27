@@ -26,6 +26,7 @@ class mineSweeper:
     def generate(self):
         self.__getMines()
         self.__detectMines()
+        print(self.base)
 
     def __getMines(self):
         while len(self.minesMap) < self.mines:
@@ -37,26 +38,13 @@ class mineSweeper:
             self.base[i][j] = -1
 
     def __detectMines(self):
-        for i in range(self.height):
-            for j in range(self.width):
-                if self.base[i][j] == -1:
-                    continue
-                else:
-                    mn = self.__mineNum(i, j)
-                    self.base[i][j] = mn
-
-    def __mineNum(self, hp, wp):
         direction = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1)]
-        mn = 0
-        for h, w in direction:
-            newH = hp + h
-            newW = wp + w
-            if newH not in range(0, self.height) or newW not in range(0, self.width):
-                continue
-            else:
-                if self.base[newH][newW] == -1:
-                    mn += 1
-        return mn
+        for row, col in self.minesMap:
+            for offsetRow, offsetCol in direction:
+                nowRow = row + offsetRow
+                nowCol = col + offsetCol
+                if nowRow in range(self.height) and nowCol in range(self.width) and self.base[nowRow][nowCol] != -1:
+                    self.base[nowRow][nowCol] += 1
 
 def main():
     a = mineSweeper(3, 9, 10)
