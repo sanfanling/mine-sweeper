@@ -15,7 +15,7 @@ class settingDialog(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Setting")
-        self.setWindowIcon(QIcon("sources/mine.png"))
+        self.setWindowIcon(QIcon("sources/pictures/mine.png"))
         
         buttonBox = QDialogButtonBox(self)
         cancelButton = QPushButton("Cancel")

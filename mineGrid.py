@@ -60,14 +60,14 @@ class mineGrid(QPushButton):
         self.state = "markState"
         self.setFlat(False)
         self.setText("")
-        self.setIcon(QIcon("sources/mark.png"))
+        self.setIcon(QIcon("sources/pictures/mark.png"))
     
     # under questionState, accept right click (change to blankState), ignore left click and mid click
     def setQuestionState(self):
         self.state = "questionState"
         self.setFlat(False)
         self.setText("")
-        self.setIcon(QIcon("sources/question.png"))
+        self.setIcon(QIcon("sources/pictures/question.png"))
     
     # under numberState, only accept mid click
     def setNumberState(self):
@@ -88,13 +88,13 @@ class mineGrid(QPushButton):
         pal = self.palette()
         pal.setColor(QPalette.Button, Qt.red)
         self.setPalette(pal)
-        self.setIcon(QIcon("sources/mine.png"))
+        self.setIcon(QIcon("sources/pictures/mine.png"))
     
     def setMarkWrongState(self):
         self.state = "markWrongState"
         self.setFlat(False)
         self.setText("")
-        self.setIcon(QIcon("sources/wrong.png"))
+        self.setIcon(QIcon("sources/pictures/wrong.png"))
         
     # under zeroState, ignore all mouse mouse event
     def setZeroState(self):
@@ -107,7 +107,7 @@ class mineGrid(QPushButton):
         self.state = "mineState"
         self.setFlat(False)
         self.setText("")
-        self.setIcon(QIcon("sources/mine.png"))
+        self.setIcon(QIcon("sources/pictures/mine.png"))
     
     def setDisableState(self):
         self.state = "disableState"

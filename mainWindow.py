@@ -24,7 +24,7 @@ class mainWindow(baseWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("mine sweeper")
-        self.setWindowIcon(QIcon("sources/mine.png"))
+        self.setWindowIcon(QIcon("sources/pictures/mine.png"))
         self.setSizePolicy(QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored))
         self.resizeTimer = QTimer()
         self.resizeTimer.setSingleShot(True)
@@ -250,7 +250,7 @@ class mainWindow(baseWindow):
         self.myTimer.stop()
         print("Fail!")
         if self.data.sound:
-            self.soundEffect.setSource(QUrl.fromLocalFile("sources/bomb.wav"))
+            self.soundEffect.setSource(QUrl.fromLocalFile("sources/sounds/bomb.wav"))
             self.soundEffect.play()
         
         for i in range(0, self.row):
@@ -284,7 +284,7 @@ class mainWindow(baseWindow):
             self.myTimer.stop()
             print("Win! time: {} seconds".format(self.timeUsage))
             if self.data.sound:
-                self.soundEffect.setSource(QUrl.fromLocalFile("sources/win.wav"))
+                self.soundEffect.setSource(QUrl.fromLocalFile("sources/sounds/win.wav"))
                 self.soundEffect.play()
             
             for i in range(0, self.row):
@@ -308,7 +308,7 @@ class mainWindow(baseWindow):
                     else:
                         r = self.data.difficultRankList
                     if self.data.sound:
-                        self.soundEffect.setSource(QUrl.fromLocalFile("sources/cheer.wav"))
+                        self.soundEffect.setSource(QUrl.fromLocalFile("sources/sounds/cheer.wav"))
                         self.soundEffect.play()
                     bestDialog = displayBestDialog(self.mode, r)
                     bestDialog.highLightCurrentRecord(ind)

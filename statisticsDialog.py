@@ -14,7 +14,7 @@ class displayBestDialog(QDialog):
     def __init__(self, mode, rankList):
         super().__init__()
         self.setWindowTitle("Made a record!")
-        self.setWindowIcon(QIcon("sources/mine.png"))
+        self.setWindowIcon(QIcon("sources/pictures/mine.png"))
         self.setMinimumWidth(350)
         
         self.display = baseBestBox(mode, rankList)
@@ -47,7 +47,7 @@ class statisticsDialog(QDialog):
     def __init__(self, easyRankList = [], easy_totalGame = 0, easy_winGame = 0, mediumRankList = [], medium_totalGame = 0, medium_winGame = 0, difficultRankList = [], difficult_totalGame = 0, difficult_winGame = 0):
         super().__init__()
         self.setWindowTitle("Statistics")
-        self.setWindowIcon(QIcon("sources/mine.png"))
+        self.setWindowIcon(QIcon("sources/pictures/mine.png"))
         self.setMinimumWidth(350)
         
         self.chooseItem = QComboBox()
