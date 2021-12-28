@@ -133,14 +133,18 @@ class mainWindow(baseWindow):
         self.initExtra()
     
     def initExtra(self):
+        self.myTimer.stop()
         self.data.updateTotalGame(self.mode)
         self.markedMinesMap = []
         self.timeUsage = 0
         self.minesLeftLcd.display(self.mines)
         self.timeUsageLcd.display(0)
-        self.myTimer.start(1000)
         if self.data.autoStart and (self.mode == "Medium" or self.mode == "Difficult"):
+            self.firstClick = True
             self.zeroTouched_(*self.zeroPoint)
+            self.myTimer.start(1000)
+        else:
+            self.firstClick = False
     
     def restoreGrids(self):
         for i in range(self.row):
@@ -266,6 +270,9 @@ class mainWindow(baseWindow):
         self.timeUsageLcd.display(self.timeUsage)
     
     def checkWin(self):
+        if not self.firstClick:
+            self.firstClick = True
+            self.myTimer.start(1000)
         tmpList = []
         for i in range(0, self.row):
             for j in range(0, self.column):
@@ -300,6 +307,9 @@ class mainWindow(baseWindow):
                         r = self.data.mediumRankList
                     else:
                         r = self.data.difficultRankList
+                    if self.data.sound:
+                        self.soundEffect.setSource(QUrl.fromLocalFile("sources/cheer.wav"))
+                        self.soundEffect.play()
                     bestDialog = displayBestDialog(self.mode, r)
                     bestDialog.highLightCurrentRecord(ind)
                     bestDialog.exec_()
@@ -342,13 +352,7 @@ class mainWindow(baseWindow):
                     w.setQuestionMark(self.data.questionMark)
                     if not self.data.questionMark and w.state == "questionState":
                         w.setBlankState()
-            
-            
-            
-            # proceed autoStart
-            # proceed sound
-            # procedd grid size
-            # proceed number size
+                        
             for i in range(self.row):
                 for j in range(self.column):
                     self.gridLayout.itemAtPosition(i, j).widget().setNumberSize(self.data.numberSize)
@@ -359,7 +363,7 @@ class mainWindow(baseWindow):
 
     
     def closeEvent(self, e):
-        self.data.updateLastMode(self.mode)
+        self.data.lastMode = self.mode
         self.data.setAllData()
         self.data.writeToFile()
         e.accept()
