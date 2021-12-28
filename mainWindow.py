@@ -74,7 +74,8 @@ class mainWindow(baseWindow):
                 m.mineTouched.connect(self.gameFailed)
                 m.mineMarked.connect(self.mineMarked_)
                 m.cancelMineMarked.connect(self.cancelMineMarked_)
-                m.numberMarked.connect(self.checkWin)                
+                m.numberMarked.connect(self.checkWin)
+                m.touchCancel.connect(self.touchCancel_)
         
         wid = QWidget()
         mainLayout = QVBoxLayout(None)
@@ -203,13 +204,16 @@ class mainWindow(baseWindow):
         for r, c in tmpList:
             eval("self.gridLayout.itemAtPosition({}, {}).widget().{}".format(r, c, expression))
     
+    def touchCancel_(self, row, column):
+        blankAndQuestionPosList = self.getNearPos(row, column, "blankState questionState") #邻居空白+问号位置
+        self.operateGridTogether("setDown(False)", blankAndQuestionPosList)
+    
     def touchRelease_(self, row, column):
         minePoslist = self.getNearPos(row, column, "markState")  #邻居雷位置
         blankAndQuestionPosList = self.getNearPos(row, column, "blankState questionState") #邻居空白+问号位置
+        self.operateGridTogether("setDown(False)", blankAndQuestionPosList)
         
         mineNum = len(minePoslist)
-        
-        self.operateGridTogether("setDown(False)", blankAndQuestionPosList)
         if mineNum == self.sender().value:
             wrongMark = self.checkMark(minePoslist)
             if wrongMark == []:

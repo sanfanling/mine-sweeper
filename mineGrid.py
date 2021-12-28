@@ -17,6 +17,7 @@ class mineGrid(QPushButton):
     mineTouched = pyqtSignal(int, int, bool)
     mineMarked = pyqtSignal(int, int)
     cancelMineMarked = pyqtSignal(int, int)
+    touchCancel = pyqtSignal(int, int)
     numberMarked = pyqtSignal()
     
     def __init__(self, row, column, acceptQuestionMark = True, value = 0): # value理论上为0-8,0意味着周边没有雷，表象上应该是灰色不可按；如value == -1,定义为“雷”
@@ -117,11 +118,8 @@ class mineGrid(QPushButton):
         
     def mouseReleaseEvent(self, e):
         if not self.rect().contains(e.pos()):
-            if self.state == 'numberState' and self.leftRight:
-                self.touchRelease.emit(self.row, self.column)
-            else:
-                self.setDown(False)
-                self.leftRight = False
+            self.setDown(False)
+            self.leftRight = False
             return
         
         if self.state == "blankState":
@@ -166,7 +164,10 @@ class mineGrid(QPushButton):
                 self.touchRelease.emit(self.row, self.column)
         
     def mouseMoveEvent(self, e):
-        self.setDown(False)
+        if not self.rect().contains(e.pos()):
+            self.setDown(False)
+            if self.state == 'numberState' and self.leftRight:
+                self.touchCancel.emit(self.row, self.column)
     
     def mousePressEvent(self, e):
         if self.state == "blankState":
