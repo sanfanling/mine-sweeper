@@ -154,6 +154,9 @@ class mineGrid(QPushButton):
             self.setDown(False)
             if e.button() == Qt.RightButton and not self.leftRight:
                 self.setBlankState()
+            elif e.button() == Qt.LeftButton and not self.leftRight:
+                self.setBlankState()
+                self.mouseReleaseEvent(e)
             elif e.buttons() == Qt.NoButton and self.leftRight:
                 self.leftRight = False
         
@@ -189,7 +192,7 @@ class mineGrid(QPushButton):
                 self.leftRight = True
         
         elif self.state == "questionState":
-            if e.button() == Qt.RightButton:
+            if e.button() == Qt.RightButton or e.button() == Qt.LeftButton:
                 self.setDown(True)
                 self.leftRight = False
             if (e.buttons() == Qt.LeftButton | Qt.RightButton) or e.button() == Qt.MidButton:
