@@ -42,7 +42,7 @@ class displayBestDialog(QDialog):
 
 class statisticsDialog(QDialog):
     
-    dataReset = pyqtSignal()
+    dataReset = pyqtSignal(str)
     
     def __init__(self, easyRankList = [], easy_totalGame = 0, easy_winGame = 0, mediumRankList = [], medium_totalGame = 0, medium_winGame = 0, difficultRankList = [], difficult_totalGame = 0, difficult_winGame = 0):
         super().__init__()
@@ -62,7 +62,15 @@ class statisticsDialog(QDialog):
         self.stackedWidget.addWidget(self.difficultPage)
         
         self.buttonBox = QDialogButtonBox(self)
-        self.resetButton = QPushButton("Reset")
+        self.resetButton = QPushButton("Reset...")
+        resetMenu = QMenu()
+        self.resetEasy = QAction("Easy...", self)
+        self.resetMedium = QAction("Medium...", self)
+        self.resetDifficult = QAction("Difficult...", self)
+        resetMenu.addAction(self.resetEasy)
+        resetMenu.addAction(self.resetMedium)
+        resetMenu.addAction(self.resetDifficult)
+        self.resetButton.setMenu(resetMenu)
         self.okButton = QPushButton("OK")
         self.buttonBox.addButton(self.resetButton, QDialogButtonBox.ResetRole)
         self.buttonBox.addButton(self.okButton, QDialogButtonBox.AcceptRole)
@@ -76,15 +84,22 @@ class statisticsDialog(QDialog):
         
         self.chooseItem.activated.connect(self.changePage)
         self.buttonBox.accepted.connect(self.accept)
-        self.resetButton.clicked.connect(self.reset)
+        self.resetEasy.triggered.connect(self.reset)
+        self.resetMedium.triggered.connect(self.reset)
+        self.resetDifficult.triggered.connect(self.reset)
     
     def reset(self):
-        re = QMessageBox.warning(self, "mine sweeper", "All the best records & statistics would be RESET\nAre you sure?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+        mode = self.sender().text().replace("...", "")
+        re = QMessageBox.warning(self, "mine sweeper", "The {} mode best records & statistics would be RESET\nAre you sure?".format(mode), QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
         if re == 16384:
-            self.easyPage.reset()
-            self.mediumPage.reset()
-            self.difficultPage.reset()
-            self.dataReset.emit()
+            if mode == "Easy":
+                self.easyPage.reset()
+            elif mode == "Medium":
+                self.mediumPage.reset()
+            elif mode == "Difficult":
+                self.difficultPage.reset()
+            self.dataReset.emit(mode)
+        
     
     def changePage(self, index):
         self.stackedWidget.setCurrentIndex(index)
