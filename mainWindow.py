@@ -41,7 +41,6 @@ class mainWindow(baseWindow):
         self.myTimer = QTimer()
         self.soundEffect = QSoundEffect(self)
         self.timeUsage = 0
-        self.originalGridPal = self.palette()
         
         self.virtualNewWorld()
         
@@ -116,7 +115,6 @@ class mainWindow(baseWindow):
             for j in range(self.column):
                 wid = self.gridLayout.itemAtPosition(i, j).widget()
                 wid.setValue(self.sourcesMap[i][j])
-                wid.setPalette(self.originalGridPal)
                 
     def virtualNewGame(self):
         self.restoreGrids()
@@ -151,7 +149,6 @@ class mainWindow(baseWindow):
             for j in range(self.column):
                 wid = self.gridLayout.itemAtPosition(i, j).widget()
                 wid.setBlankState()
-                wid.setPalette(self.originalGridPal)
     
     def changeMode_(self):
         if self.mode != self.sender().text():

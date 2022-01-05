@@ -52,62 +52,71 @@ class mineGrid(QPushButton):
         self.state = "blankState"
         self.setDown(False)
         self.setFlat(False)
+        self.setEnabled(True)
         self.setText("")
-        self.setIcon(QIcon(""))
+        s = "QPushButton{background-color: rgb(104, 140, 218); border: 1px outset black} QPushButton:hover{background-color: rgb(85, 170, 255); border: 1px outset black} QPushButton:pressed{background-color: rgb(184, 229, 251); border-style:inset}"
+        self.setStyleSheet(s)
     
     # under markState, accept right click (change to questionState), ignore left click and mid click 
     def setMarkState(self):
         self.state = "markState"
         self.setFlat(False)
         self.setText("")
-        self.setIcon(QIcon("sources/pictures/mark.png"))
+        s = "QPushButton{border-image: url(./sources/pictures/mark.png); background-color: rgb(104, 140, 218); border: 1px outset black}"
+        self.setStyleSheet(s)
+        #self.setIcon(QIcon("sources/pictures/mark.png"))
     
     # under questionState, accept right click (change to blankState), ignore left click and mid click
     def setQuestionState(self):
         self.state = "questionState"
         self.setFlat(False)
         self.setText("")
-        self.setIcon(QIcon("sources/pictures/question.png"))
+        s = "QPushButton{border-image: url(./sources/pictures/question.png); background-color: rgb(104, 140, 218); border: 1px outset black}"
+        self.setStyleSheet(s)
+        #self.setIcon(QIcon("sources/pictures/question.png"))
     
     # under numberState, only accept mid click
     def setNumberState(self):
         self.state = "numberState"
         self.setFlat(True)
-        pal = self.palette()
-        colorDict = {1: QColor(0, 0, 254), 2: QColor(0, 128, 0), 3: QColor(254, 0, 0), 4: QColor(0, 0, 128), 5: QColor(128, 0, 0), 6: QColor(128, 128, 0), 7: QColor(0, 0, 0), 8: QColor(128, 128, 128)}
-        pal.setColor(QPalette.WindowText, colorDict[self.value])
-        self.setPalette(pal)
+        colorDict = {1: "rgb(0, 0, 254)", 2: "rgb(0, 128, 0)", 3: "rgb(254, 0, 0)", 4: "rgb(0, 0, 128)", 5: "rgb(128, 0, 0)", 6: "rgb(128, 128, 0)", 7: "rgb(0, 0, 0)", 8: "rgb(128, 128, 128)"}
+        s = "QPushButton{}color: {}; border: 1px solid black{}".format("{", colorDict[self.value], "}")
+        self.setStyleSheet(s)
         self.setText(str(self.value))
-        self.setIcon(QIcon(""))
     
     # under explodeState, game over
     def setExplodeState(self):
         self.state = "explodeState"
         self.setFlat(False)
         self.setText("")
-        pal = self.palette()
-        pal.setColor(QPalette.Button, Qt.red)
-        self.setPalette(pal)
-        self.setIcon(QIcon("sources/pictures/mine.png"))
+        s = "QPushButton{background-color: red; border-image: url(./sources/pictures/mine.png); border: 1px solid black}"
+        self.setStyleSheet(s)
+        #self.setIcon(QIcon("sources/pictures/mine.png"))
     
     def setMarkWrongState(self):
         self.state = "markWrongState"
         self.setFlat(False)
         self.setText("")
-        self.setIcon(QIcon("sources/pictures/wrong.png"))
+        s = "QPushButton{background-color: rgb(104, 140, 218); border-image: url(./sources/pictures/wrong.png); border: 1px solid black}"
+        self.setStyleSheet(s)
+        #self.setIcon(QIcon("sources/pictures/wrong.png"))
         
     # under zeroState, ignore all mouse mouse event
     def setZeroState(self):
         self.state = "zeroState"
-        self.setFlat(True)
+        #self.setFlat(True)
+        self.setEnabled(False)
+        s = "QPushButton{background-color: rgb(217, 217, 217); border: 1px dashed black}"
+        self.setStyleSheet(s)
         self.setText("")
-        self.setIcon(QIcon(""))
     
     def setMineState(self):
         self.state = "mineState"
         self.setFlat(False)
         self.setText("")
-        self.setIcon(QIcon("sources/pictures/mine.png"))
+        s = "QPushButton{background-color: rgb(104, 140, 218); border-image: url(./sources/pictures/mine.png); border: 1px solid black}"
+        self.setStyleSheet(s)
+        #self.setIcon(QIcon("sources/pictures/mine.png"))
     
     def setDisableState(self):
         self.state = "disableState"
