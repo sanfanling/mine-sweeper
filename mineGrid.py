@@ -54,7 +54,7 @@ class mineGrid(QPushButton):
         self.setFlat(False)
         self.setEnabled(True)
         self.setText("")
-        s = "QPushButton{background-color: rgb(104, 140, 218); border: 1px outset black} QPushButton:hover{background-color: rgb(85, 170, 255); border: 1px outset black} QPushButton:pressed{background-color: rgb(184, 229, 251); border-style:inset}"
+        s = "QPushButton{background-color: rgb(98, 131, 204); border: 1px outset black} QPushButton:hover{background-color: rgb(119, 160, 248); border: 1px outset black} QPushButton:pressed{background-color: rgb(184, 229, 251); border-style:inset}"
         self.setStyleSheet(s)
     
     # under markState, accept right click (change to questionState), ignore left click and mid click 
@@ -62,7 +62,7 @@ class mineGrid(QPushButton):
         self.state = "markState"
         self.setFlat(False)
         self.setText("")
-        s = "QPushButton{border-image: url(./sources/pictures/mark.png); background-color: rgb(104, 140, 218); border: 1px outset black}"
+        s = "QPushButton{border-image: url(./sources/pictures/mark.png); background-color: rgb(98, 131, 204); border: 1px outset black}"
         self.setStyleSheet(s)
         #self.setIcon(QIcon("sources/pictures/mark.png"))
     
@@ -71,7 +71,7 @@ class mineGrid(QPushButton):
         self.state = "questionState"
         self.setFlat(False)
         self.setText("")
-        s = "QPushButton{border-image: url(./sources/pictures/question.png); background-color: rgb(104, 140, 218); border: 1px outset black}"
+        s = "QPushButton{border-image: url(./sources/pictures/question.png); background-color: rgb(98, 131, 204); border: 1px outset black}"
         self.setStyleSheet(s)
         #self.setIcon(QIcon("sources/pictures/question.png"))
     
@@ -97,7 +97,7 @@ class mineGrid(QPushButton):
         self.state = "markWrongState"
         self.setFlat(False)
         self.setText("")
-        s = "QPushButton{background-color: rgb(104, 140, 218); border-image: url(./sources/pictures/wrong.png); border: 1px solid black}"
+        s = "QPushButton{background-color: rgb(98, 131, 204); border-image: url(./sources/pictures/wrong.png); border: 1px solid black}"
         self.setStyleSheet(s)
         #self.setIcon(QIcon("sources/pictures/wrong.png"))
         
@@ -114,7 +114,7 @@ class mineGrid(QPushButton):
         self.state = "mineState"
         self.setFlat(False)
         self.setText("")
-        s = "QPushButton{background-color: rgb(104, 140, 218); border-image: url(./sources/pictures/mine.png); border: 1px solid black}"
+        s = "QPushButton{background-color: rgb(98, 131, 204); border-image: url(./sources/pictures/mine.png); border: 1px solid black}"
         self.setStyleSheet(s)
         #self.setIcon(QIcon("sources/pictures/mine.png"))
     
