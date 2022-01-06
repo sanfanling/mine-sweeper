@@ -24,7 +24,7 @@ class mainWindow(baseWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("mine sweeper")
-        self.setWindowIcon(QIcon("sources/pictures/mine.png"))
+        self.setWindowIcon(QIcon("sources/pictures/icon.png"))
         self.setSizePolicy(QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored))
         self.resizeTimer = QTimer()
         self.resizeTimer.setSingleShot(True)
