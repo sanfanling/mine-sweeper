@@ -137,7 +137,7 @@ class mainWindow(baseWindow):
         self.timeUsage = 0
         self.minesLeftLcd.display(self.mines)
         self.timeUsageLcd.display(0)
-        if self.data.autoStart and (self.mode == "Medium" or self.mode == "Difficult"):
+        if self.data.autoStart and (self.mode == "Medium" or self.mode == "Difficult" or self.mode == "Custom"):
             self.firstClick = True
             self.zeroTouched_(*self.zeroPoint)
             self.myTimer.start(1000)
@@ -353,7 +353,10 @@ class mainWindow(baseWindow):
                     self.gridLayout.itemAtPosition(i, j).widget().setNumberSize(self.data.numberSize)
                     self.gridLayout.itemAtPosition(i, j).widget().setGridSize(self.data.gridSize)
             
-            self.modeDict["Custom"] = self.data.customSize
+            if self.mode == "Custom" and self.modeDict["Custom"] != self.data.customSize:
+                self.modeDict["Custom"] = self.data.customSize
+                self.row, self.column, self.mines = self.modeDict["Custom"]
+                self.virtualNewWorld()
             self.resizeTimer.start(100)
 
     
