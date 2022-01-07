@@ -8,9 +8,9 @@
 
 ### Run:
 * navigate to source dir in console and type: `python ms.py` in console to run the application
-* or directly click 'ms.py' to run
+* or directly click `ms.py` to run
 * the application was tested in Linux and windows system
-* for windows user, you can renmae 'ms.py' to 'ms.pyw' to avoid the console
+* for windows user, you can rename `ms.py` to `ms.pyw` to prevent showing the console
 
 ### Author:
 * sanfanling (xujia19@outlook.com)
