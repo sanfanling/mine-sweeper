@@ -97,13 +97,14 @@ class handleData:
         self.cf.set("mediumMode", "winGame", str(self.medium_winGame))
         self.cf.set("difficultMode", "totalGame", str(self.difficult_totalGame))
         self.cf.set("difficultMode", "winGame", str(self.difficult_winGame))
+        self.cf.set("custom", "size", self.customSize)
         for p in range(1, 11):
             self.cf.set("easyMode", str(p), self.easyRankList[p - 1])
             self.cf.set("mediumMode", str(p), self.mediumRankList[p -1])
             self.cf.set("difficultMode", str(p), self.difficultRankList[p - 1])
     
     def __toStrTpye(self):
-        self.customSize = ",".join(map(str, self.customSize))
+        self.customSize = ", ".join(map(str, self.customSize))
         
         
         tmpEasyList = []
