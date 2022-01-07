@@ -28,6 +28,8 @@ class mainWindow(baseWindow):
         self.setSizePolicy(QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored))
         self.resizeTimer = QTimer()
         self.resizeTimer.setSingleShot(True)
+        w = int((QApplication.desktop().availableGeometry(self).width() - self.width()) / 2)
+        self.move(w, 200)
         
         self.data = handleData()
         self.data.getAllData()
@@ -55,7 +57,7 @@ class mainWindow(baseWindow):
         self.difficultAction.triggered.connect(self.changeMode_)
         self.customAction.triggered.connect(self.changeMode_)
         self.settingAction.triggered.connect(self.settingAction_)
-        self.resizeTimer.timeout.connect(self.positionAndSize)
+        self.resizeTimer.timeout.connect(self.adjustSize)
     
     def initBoard(self):
         self.gridLayout = QGridLayout(None)
@@ -153,11 +155,6 @@ class mainWindow(baseWindow):
             self.mode = self.sender().text()
             self.row, self.column, self.mines = self.modeDict[self.mode]
             self.virtualNewWorld()
-            
-    def positionAndSize(self):
-        self.adjustSize()
-        w = int((QApplication.desktop().availableGeometry(self).width() - self.width()) / 2)
-        self.move(w, 200)
         
     def getNearPos(self, row, col, key):
         direction = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1)]
