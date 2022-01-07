@@ -1,5 +1,5 @@
 # mine sweeper
-## It is a PyQt5 version of classic windows mine sweeper game. The final purpose of this application is no difference between clone version and windows classic version
+## It is a PyQt5 version of classic windows mine sweeper game. The final purpose of this application is no different experience between clone version and windows classic version
 
 ### Dependency:
 * python >= 3.7
@@ -7,8 +7,10 @@
 * numpy (optional)
 
 ### Run:
-* navigate to source dir in console
-* type: `python ms.py` in console to run the application
+* navigate to source dir in console and type: `python ms.py` in console to run the application
+* or directly click 'ms.py' to run
+* the application was tested in Linux and windows system
+* for windows user, you can renmae 'ms.py' to 'ms.pyw' to avoid the console
 
 ### Author:
 * sanfanling (xujia19@outlook.com)

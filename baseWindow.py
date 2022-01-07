@@ -73,4 +73,4 @@ class baseWindow(QMainWindow):
         QMessageBox.aboutQt(self, "About Qt")
     
     def aboutGameAction_(self):
-        QMessageBox.about(self, "About mine sweeper", "It is a PyQt5 version of classic windows mine sweeper game. The final purpose of this application is no difference between clone version and windows classic version.\n\nAuthor: sanfanling (xujia19@outlook.con)")
+        QMessageBox.about(self, "About mine sweeper", "It is a PyQt5 version of classic windows mine sweeper game. The final purpose of this application is no different experience between clone version and windows classic version.\n\nAuthor: sanfanling (xujia19@outlook.con)")

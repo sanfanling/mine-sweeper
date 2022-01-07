@@ -55,7 +55,7 @@ class mainWindow(baseWindow):
         self.difficultAction.triggered.connect(self.changeMode_)
         self.customAction.triggered.connect(self.changeMode_)
         self.settingAction.triggered.connect(self.settingAction_)
-        self.resizeTimer.timeout.connect(self.adjustSize)
+        self.resizeTimer.timeout.connect(self.positionAndSize)
     
     def initBoard(self):
         self.gridLayout = QGridLayout(None)
@@ -100,8 +100,6 @@ class mainWindow(baseWindow):
         self.setCentralWidget(wid)
         #self.adjustSize()
         self.resizeTimer.start(100)
-        w = int(QApplication.desktop().availableGeometry(self).width() / 2 - self.width())
-        self.move(w, 200)
     
     def initGame(self):
         game = mineSweeper(self.row, self.column, self.mines)
@@ -156,7 +154,10 @@ class mainWindow(baseWindow):
             self.row, self.column, self.mines = self.modeDict[self.mode]
             self.virtualNewWorld()
             
-            
+    def positionAndSize(self):
+        self.adjustSize()
+        w = int((QApplication.desktop().availableGeometry(self).width() - self.width()) / 2)
+        self.move(w, 200)
         
     def getNearPos(self, row, col, key):
         direction = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1)]
