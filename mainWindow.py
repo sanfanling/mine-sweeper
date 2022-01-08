@@ -353,10 +353,11 @@ class mainWindow(baseWindow):
                     self.gridLayout.itemAtPosition(i, j).widget().setNumberSize(self.data.numberSize)
                     self.gridLayout.itemAtPosition(i, j).widget().setGridSize(self.data.gridSize)
             
-            if self.mode == "Custom" and self.modeDict["Custom"] != self.data.customSize:
+            if self.modeDict["Custom"] != self.data.customSize:
                 self.modeDict["Custom"] = self.data.customSize
-                self.row, self.column, self.mines = self.modeDict["Custom"]
-                self.virtualNewWorld()
+                if self.mode == "Custom":
+                    self.row, self.column, self.mines = self.modeDict["Custom"]
+                    self.virtualNewWorld()
             self.resizeTimer.start(100)
 
     
