@@ -59,7 +59,10 @@ class mineSweeper:
             if set(tmpList).issubset(set(zeroMap)):
                 self.zeroPoint = point
                 return
-        self.zeroPoint = random.choice(zeroMap)
+        try:
+            self.zeroPoint = random.choice(zeroMap)
+        except IndexError:
+            self.zeroPoint = None
             
 
 def main():

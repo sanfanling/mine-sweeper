@@ -35,8 +35,14 @@ class settingDialog(QDialog):
         
         self.setLayout(mainLayout)
                 
-        buttonBox.accepted.connect(self.accept)
+        buttonBox.accepted.connect(self.checkSettings)
         buttonBox.rejected.connect(self.reject)
+    
+    def checkSettings(self):
+        if self.customBox.customMines.value() > self.customBox.customHeight.value() * self.customBox.customWidth.value() / 2:
+            ret = QMessageBox.critical(self, "value error", "The mines can't be more than height * width / 2! \nIt is limited by libms.")
+        else:
+            self.accept()
 
 
 class generalBox(QGroupBox):
@@ -47,14 +53,16 @@ class generalBox(QGroupBox):
         self.setAlignment(Qt.AlignHCenter)
         
         self.questionMark = QCheckBox("Enable \"?\" mark in the game", self)
-        self.autoStart = QCheckBox("Auto start at first (Media, Difficult and Custom only)", self)
+        self.autoStart = QCheckBox("Auto start at first (Effect Media, Difficult and Custom mode)", self)
         #self.autoStart.setEnabled(False)
+        self.autoStartNoteLabel = QLabel("Note: this function might fail, if too many mines defined in Custom mode", self)
         self.sound = QCheckBox("Enable sound effect", self)
         #self.sound.setEnabled(False)
         
         mainLayout = QVBoxLayout(None)
         mainLayout.addWidget(self.questionMark)
         mainLayout.addWidget(self.autoStart)
+        mainLayout.addWidget(self.autoStartNoteLabel)
         mainLayout.addWidget(self.sound)
         self.setLayout(mainLayout)
 
@@ -103,7 +111,7 @@ class customBox(QGroupBox):
         self.customMines = QSpinBox(self)
         self.customMines.setMinimum(1)
         mainLayout.addWidget(self.customMines, 2, 1)
-        self.infoLabel = QLabel("Important: mines can't be more than height*width/2", self)
+        self.infoLabel = QLabel("Important: mines can't be more than height * width / 2", self)
         self.infoLabel.setStyleSheet("QLabel{color: red}")
         mainLayout.addWidget(self.infoLabel, 3, 0)
         self.setLayout(mainLayout)

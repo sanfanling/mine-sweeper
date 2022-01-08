@@ -139,7 +139,8 @@ class mainWindow(baseWindow):
         self.timeUsageLcd.display(0)
         if self.data.autoStart and (self.mode == "Medium" or self.mode == "Difficult" or self.mode == "Custom"):
             self.firstClick = True
-            self.zeroTouched_(*self.zeroPoint)
+            if self.zeroPoint != None:
+                self.zeroTouched_(*self.zeroPoint)
             self.myTimer.start(1000)
         else:
             self.firstClick = False
