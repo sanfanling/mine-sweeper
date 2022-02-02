@@ -71,7 +71,7 @@ class mineGrid(QPushButton):
         self.state = "questionState"
         self.setFlat(False)
         self.setText("")
-        s = "QPushButton{border-image: url(./sources/pictures/question.png); background-color: rgb(98, 131, 204); border: 1px outset black}"
+        s = "QPushButton{border-image: url(./sources/pictures/question.png); background-color: rgb(98, 131, 204); border: 1px outset black} QPushButton:hover{background-color: rgb(119, 160, 248); border: 1px outset black} QPushButton:pressed{background-color: rgb(184, 229, 251); border-style:inset}"
         self.setStyleSheet(s)
         #self.setIcon(QIcon("sources/pictures/question.png"))
     
